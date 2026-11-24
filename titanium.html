@@ -1,0 +1,2321 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Titanium Digital Workshop — منظومة التحول الرقمي وإدارة الورشة</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Readex+Pro:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --forest:#1B3358; --forest-2:#243F6B; --deep:#0F213D; --abyss:#06142E;
+  --yellow:#F5D7DB; --orange:#F1916D;
+  --text:#ECF3EE; --muted:rgba(236,243,238,.66); --faint:rgba(236,243,238,.40);
+  --glass:rgba(255,255,255,.045); --glass-2:rgba(255,255,255,.075);
+  --line:rgba(245,215,219,.16); --line-2:rgba(255,255,255,.09);
+  --ok:#62E3AE; --info:#8CCBFF; --bad:#FF6F5E;
+  --r-xl:28px; --r-lg:20px; --r-md:14px; --r-sm:10px;
+  --shadow:0 40px 90px -40px rgba(0,0,0,.75), 0 12px 30px -12px rgba(0,0,0,.45);
+  --font:'Readex Pro', 'Segoe UI', Tahoma, system-ui, sans-serif;
+  --mono:'JetBrains Mono', ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace;
+  color-scheme: dark;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){ --forest:#1B3358; --deep:#0F213D; --text:#ECF3EE; } }
+:root[data-theme="dark"]{ --forest:#1B3358; --deep:#0F213D; --text:#ECF3EE; }
+
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+body{
+  font-family:var(--font); color:var(--text); line-height:1.75; font-weight:300;
+  background:
+    radial-gradient(1200px 700px at 85% -10%, rgba(241,145,109,.10), transparent 60%),
+    radial-gradient(900px 600px at 5% 20%, rgba(245,215,219,.06), transparent 60%),
+    linear-gradient(180deg, var(--forest) 0%, var(--deep) 35%, var(--abyss) 100%);
+  background-color:var(--deep);
+  background-attachment:fixed;
+  overflow-x:hidden;
+}
+img,svg{max-width:100%}
+.en{font-family:var(--font);unicode-bidi:isolate;direction:ltr}
+.code{font-family:var(--mono);font-size:.86em;unicode-bidi:isolate;direction:ltr;letter-spacing:0}
+.ic{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;flex:none}
+.ic.sm{width:16px;height:16px}.ic.lg{width:26px;height:26px}.ic.xl{width:34px;height:34px}
+:focus-visible{outline:2px solid var(--orange);outline-offset:3px;border-radius:6px}
+::selection{background:var(--orange);color:#1a0d00}
+
+/* grain overlay */
+body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:1;opacity:.05;
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>")}
+
+/* ---------- header / nav ---------- */
+.progress{position:fixed;top:0;right:0;height:2px;width:0;background:linear-gradient(90deg,var(--yellow),var(--orange));z-index:60;transition:width .15s linear}
+header.top{position:fixed;inset:0 0 auto 0;z-index:50;display:flex;align-items:center;justify-content:space-between;gap:16px;padding:14px clamp(16px,3vw,36px);
+  background:linear-gradient(180deg,rgba(15,33,61,.85),rgba(15,33,61,.55));backdrop-filter:blur(16px) saturate(140%);-webkit-backdrop-filter:blur(16px) saturate(140%);border-bottom:1px solid var(--line-2)}
+.brand{display:flex;align-items:center;gap:12px;text-decoration:none;color:var(--text)}
+.mark{width:38px;height:38px;border-radius:11px;display:grid;place-items:center;position:relative;overflow:hidden;
+  background:linear-gradient(145deg,#e8ecea 0%,#9aa6a1 38%,#f7f9f8 52%,#7d8984 70%,#cfd6d3 100%);box-shadow:inset 0 1px 0 #fff,0 6px 16px -6px rgba(0,0,0,.7)}
+.mark span{font-weight:700;color:var(--forest);font-size:15px;letter-spacing:-.5px}
+.mark::after{content:"";position:absolute;inset:auto 0 0 0;height:3px;background:var(--orange)}
+.brand b{display:block;font-weight:600;font-size:14px;letter-spacing:.3px}
+.brand small{display:block;font-size:11px;color:var(--faint);line-height:1.2}
+.now{display:flex;align-items:center;gap:10px;font-size:13px;color:var(--muted);min-width:0}
+.now .num{font-family:var(--mono);color:var(--orange);font-size:12px}
+.now .ttl{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.nav-btns{display:flex;gap:8px}
+.btn-ghost{display:inline-flex;align-items:center;gap:8px;padding:9px 14px;border-radius:12px;border:1px solid var(--line-2);background:var(--glass);color:var(--text);font:inherit;font-size:13px;cursor:pointer;transition:background .2s,border-color .2s}
+.btn-ghost:hover{background:var(--glass-2);border-color:var(--line)}
+.btn-ghost.icon{padding:9px}
+
+.drawer{position:fixed;inset:0;z-index:70;pointer-events:none}
+.drawer .scrim{position:absolute;inset:0;background:rgba(0,8,6,.6);opacity:0;transition:opacity .3s}
+.drawer .panel{position:absolute;top:0;bottom:0;right:0;width:min(420px,92vw);padding:24px 20px 30px;overflow-y:auto;
+  background:linear-gradient(180deg,rgba(36,63,107,.96),rgba(15,33,61,.98));border-left:1px solid var(--line);transform:translateX(105%);transition:transform .38s cubic-bezier(.2,.8,.2,1)}
+.drawer.open{pointer-events:auto}.drawer.open .scrim{opacity:1}.drawer.open .panel{transform:none}
+.panel h3{font-size:13px;font-weight:500;color:var(--faint);margin:0 6px 14px;display:flex;justify-content:space-between;align-items:center}
+.toc a{display:grid;grid-template-columns:8px 30px 1fr;gap:10px;align-items:center;padding:10px 10px;border-radius:12px;color:var(--muted);text-decoration:none;font-size:14px;line-height:1.35;border-inline-start:2px solid transparent}
+.toc a::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--sc,var(--orange));box-shadow:0 0 8px color-mix(in srgb,var(--sc,var(--orange)) 60%,transparent)}
+.toc a:hover,.toc a.on{background:var(--glass-2);color:var(--text);border-inline-start-color:var(--sc,var(--orange))}
+.toc a .n{font-family:var(--mono);font-size:11px;color:var(--sc,var(--orange))}
+.toc a small{display:block;font-size:11px;color:var(--faint);direction:ltr;text-align:right;unicode-bidi:isolate}
+
+.dots{position:fixed;left:18px;top:50%;transform:translateY(-50%);z-index:40;display:flex;flex-direction:column;gap:9px}
+.dots a{width:9px;height:9px;border-radius:50%;background:var(--sc,rgba(255,255,255,.35));opacity:.65;box-shadow:0 0 6px color-mix(in srgb,var(--sc) 55%,transparent);transition:all .25s;position:relative}
+.dots a.on{opacity:1;height:26px;border-radius:6px;box-shadow:0 0 0 3px color-mix(in srgb,var(--sc) 30%,transparent),0 4px 16px -3px var(--sc)}
+.dots a:hover{opacity:1}
+.dots a:hover::after{content:attr(data-t);position:absolute;left:18px;top:50%;transform:translateY(-50%);white-space:nowrap;font-size:12px;background:rgba(15,33,61,.95);border:1px solid var(--line-2);padding:4px 10px;border-radius:8px;color:var(--text)}
+
+/* ---------- layout ---------- */
+main{position:relative;z-index:2}
+.wrap{max-width:1280px;margin:0 auto;padding:0 clamp(18px,4vw,48px)}
+section.pg{--stage:var(--orange);padding:clamp(90px,11vw,150px) 0 clamp(60px,8vw,110px);position:relative;scroll-margin-top:60px}
+section.pg + section.pg::before{content:"";position:absolute;top:0;left:50%;transform:translateX(-50%);width:min(1180px,90%);height:1px;background:linear-gradient(90deg,transparent,color-mix(in srgb,var(--stage) 55%,var(--line-2)),transparent)}
+.head{display:grid;grid-template-columns:auto 1fr;gap:22px 28px;align-items:start;margin-bottom:clamp(36px,5vw,60px);max-width:1000px}
+.head .pn{font-family:var(--mono);font-size:12px;color:var(--stage);border:1px solid color-mix(in srgb,var(--stage) 40%,transparent);border-radius:10px;padding:8px 10px;line-height:1;margin-top:10px;background:color-mix(in srgb,var(--stage) 9%,transparent)}
+.head .kicker{font-size:13px;color:var(--stage);opacity:.95;margin-bottom:6px;direction:ltr;text-align:right;unicode-bidi:isolate;letter-spacing:.4px;font-weight:500}
+.head h2{font-size:clamp(28px,4vw,46px);font-weight:600;line-height:1.25;letter-spacing:-.3px}
+.head p{margin-top:14px;color:var(--muted);font-size:clamp(15px,1.4vw,17.5px);max-width:72ch}
+@media (max-width:640px){.head{grid-template-columns:1fr}.head .pn{justify-self:start}}
+
+.glass{position:relative;border-radius:var(--r-xl);border:1px solid var(--line-2);
+  background:linear-gradient(165deg,rgba(255,255,255,.075) 0%,rgba(255,255,255,.025) 45%,rgba(255,255,255,.015) 100%);
+  backdrop-filter:blur(18px) saturate(130%);-webkit-backdrop-filter:blur(18px) saturate(130%);
+  box-shadow:var(--shadow), inset 0 1px 0 rgba(255,255,255,.09)}
+.glass::before{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;
+  background:linear-gradient(115deg,rgba(255,255,255,.10) 0%,rgba(255,255,255,0) 28%);mix-blend-mode:screen}
+.pad{padding:clamp(18px,2.6vw,32px)}
+.muted{color:var(--muted)}.faint{color:var(--faint)}
+.grid{display:grid;gap:clamp(14px,2vw,24px)}
+.g2{grid-template-columns:repeat(2,minmax(0,1fr))}
+.g3{grid-template-columns:repeat(3,minmax(0,1fr))}
+.g4{grid-template-columns:repeat(4,minmax(0,1fr))}
+@media (max-width:1024px){.g4{grid-template-columns:repeat(2,minmax(0,1fr))}.g3{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:720px){.g2,.g3,.g4{grid-template-columns:1fr}}
+.scroll-x{overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:thin}
+.scroll-x::-webkit-scrollbar{height:6px}.scroll-x::-webkit-scrollbar-thumb{background:var(--line);border-radius:6px}
+
+.tag{display:inline-flex;align-items:center;gap:6px;font-size:12px;padding:4px 10px;border-radius:999px;border:1px solid var(--line-2);background:var(--glass);color:var(--muted);white-space:nowrap}
+.sample{display:inline-flex;align-items:center;gap:6px;font-size:11px;padding:3px 9px;border-radius:999px;border:1px dashed rgba(245,215,219,.45);color:var(--yellow);background:rgba(245,215,219,.06);white-space:nowrap;direction:ltr}
+.st{display:inline-flex;align-items:center;gap:7px;font-size:12px;font-weight:500;padding:4px 11px;border-radius:999px;white-space:nowrap;line-height:1.6}
+.st::before{content:"";width:7px;height:7px;border-radius:50%;background:currentColor;box-shadow:0 0 0 3px color-mix(in srgb,currentColor 22%,transparent)}
+.st.wait{color:var(--yellow);background:rgba(245,215,219,.10)}
+.st.work{color:var(--orange);background:rgba(241,145,109,.12)}
+.st.ok{color:var(--ok);background:rgba(98,227,174,.10)}
+.st.info{color:var(--info);background:rgba(140,203,255,.10)}
+.st.bad{color:var(--bad);background:rgba(255,111,94,.12)}
+.st.idle{color:var(--faint);background:rgba(255,255,255,.05)}
+
+.btn{text-decoration:none;display:inline-flex;align-items:center;gap:8px;padding:10px 16px;border-radius:12px;font:inherit;font-size:13.5px;font-weight:500;cursor:pointer;border:1px solid var(--line-2);background:var(--glass-2);color:var(--text);transition:transform .15s, background .2s}
+.btn:hover{background:rgba(255,255,255,.11)}
+.btn:active{transform:translateY(1px)}
+.btn.pri{background:linear-gradient(180deg,#FFB08C,var(--orange));border-color:rgba(255,255,255,.18);color:#06142E;box-shadow:0 10px 24px -10px rgba(241,145,109,.8), inset 0 1px 0 rgba(255,255,255,.4)}
+.btn.soft{background:rgba(245,215,219,.08);border-color:rgba(245,215,219,.25);color:var(--yellow)}
+
+/* window mockup */
+.win{border-radius:var(--r-lg);overflow:hidden;border:1px solid var(--line-2);background:linear-gradient(180deg,rgba(27,51,88,.92),rgba(1,26,20,.95));box-shadow:var(--shadow), inset 0 1px 0 rgba(255,255,255,.08)}
+.win-bar{display:flex;align-items:center;gap:12px;padding:11px 14px;border-bottom:1px solid var(--line-2);background:rgba(0,0,0,.18)}
+.win-bar .lights{display:flex;gap:6px;direction:ltr}
+.win-bar .lights i{width:10px;height:10px;border-radius:50%;background:rgba(255,255,255,.14)}
+.win-bar .lights i:first-child{background:rgba(241,145,109,.7)}
+.win-bar .url{flex:1;display:flex;align-items:center;gap:8px;justify-content:center;font-family:var(--mono);font-size:12px;color:var(--muted);background:rgba(255,255,255,.05);border-radius:8px;padding:5px 12px;direction:ltr;max-width:420px;margin:0 auto}
+.win-bar .url .ic{width:13px;height:13px;color:var(--ok)}
+
+/* phone mockup */
+.phone{width:300px;max-width:100%;margin:0 auto;border-radius:44px;padding:11px;position:relative;
+  background:linear-gradient(145deg,#cfd6d3,#6f7b76 30%,#e9eeec 50%,#5b6762 75%,#b8c1bd);box-shadow:0 50px 90px -30px rgba(0,0,0,.85), 0 0 0 1px rgba(0,0,0,.4)}
+.phone .scr{border-radius:34px;overflow:hidden;background:linear-gradient(180deg,#1B3358,#0F213D 70%);min-height:590px;position:relative}
+.phone .notch{position:absolute;top:10px;left:50%;transform:translateX(-50%);width:92px;height:26px;border-radius:20px;background:#000;z-index:3}
+.phone .sbar{display:flex;justify-content:space-between;padding:14px 26px 0;font-size:12px;font-weight:500;direction:ltr;color:var(--text)}
+
+/* diagram nodes */
+.node{display:inline-flex;align-items:center;gap:10px;padding:12px 18px;border-radius:14px;border:1px solid var(--line-2);background:linear-gradient(180deg,rgba(255,255,255,.08),rgba(255,255,255,.03));box-shadow:0 14px 30px -18px rgba(0,0,0,.8), inset 0 1px 0 rgba(255,255,255,.08);font-weight:500;font-size:14px;white-space:nowrap}
+.node .ic{color:var(--yellow)}
+.node.core{border-color:color-mix(in srgb,var(--stage) 55%,transparent);background:linear-gradient(180deg,color-mix(in srgb,var(--stage) 24%,transparent),color-mix(in srgb,var(--stage) 7%,transparent));box-shadow:0 0 0 6px color-mix(in srgb,var(--stage) 7%,transparent),0 20px 40px -18px color-mix(in srgb,var(--stage) 55%,transparent)}
+.node.core .ic{color:var(--stage)}
+.node.db{border-color:rgba(245,215,219,.45);background:linear-gradient(180deg,rgba(245,215,219,.16),rgba(245,215,219,.04))}
+.node small{display:block;font-size:11px;font-weight:300;color:var(--faint);line-height:1.2}
+.vline{width:2px;height:34px;margin:0 auto;position:relative;background:linear-gradient(180deg,rgba(245,215,219,.5),color-mix(in srgb,var(--stage) 75%,transparent))}
+.vline::after{content:"";position:absolute;bottom:-5px;left:50%;transform:translateX(-50%);border:5px solid transparent;border-top:6px solid var(--stage);border-bottom:0}
+.vline.flow::before{content:"";position:absolute;left:-2px;width:6px;height:6px;border-radius:50%;background:var(--stage);box-shadow:0 0 10px var(--stage);animation:drop 2.4s linear infinite}
+@keyframes drop{0%{top:-4px;opacity:0}15%{opacity:1}85%{opacity:1}100%{top:100%;opacity:0}}
+.hline-arrow{flex:1;min-width:26px;height:2px;background:linear-gradient(270deg,rgba(245,215,219,.5),rgba(241,145,109,.7));position:relative;align-self:center}
+.hline-arrow::after{content:"";position:absolute;left:-5px;top:50%;transform:translateY(-50%);border:5px solid transparent;border-right:6px solid var(--orange);border-left:0}
+
+/* reveal: one orchestrated entrance per section block */
+.js .rv{opacity:0;transform:translateY(18px);transition:opacity .8s cubic-bezier(.2,.7,.2,1),transform .8s cubic-bezier(.2,.7,.2,1)}
+.js .rv.in{opacity:1;transform:none}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}.js .rv{opacity:1;transform:none}}
+/* ---------- HERO ---------- */
+.hero{min-height:100vh;display:flex;align-items:center;padding-top:110px!important}
+.hero-grid{display:grid;grid-template-columns:1.25fr .9fr;gap:clamp(30px,5vw,70px);align-items:center}
+.hero .client{display:inline-flex;align-items:center;gap:10px;font-size:13px;color:var(--muted);padding:6px 14px 6px 6px;border-radius:999px;border:1px solid var(--line-2);background:var(--glass)}
+.hero .client b{font-family:var(--mono);font-weight:500;font-size:11px;color:#06142E;background:var(--orange);border-radius:999px;padding:3px 9px}
+.wordmark{direction:ltr;text-align:right;margin:26px 0 10px;font-weight:700;letter-spacing:-2px;line-height:.92;font-size:clamp(54px,9.2vw,132px);
+  background:linear-gradient(100deg,#8f9b96 0%,#f4f7f5 18%,#a9b4af 32%,#ffffff 46%,#7f8b86 60%,#e3e9e6 78%,#9aa6a1 100%);
+  -webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 18px 40px rgba(0,0,0,.55));
+  background-size:200% 100%;animation:sheen 9s ease-in-out infinite}
+.wordmark span{display:block;font-size:.40em;letter-spacing:6px;font-weight:500;margin-top:.25em;
+  background:linear-gradient(90deg,var(--yellow),var(--orange));-webkit-background-clip:text;background-clip:text;color:transparent}
+@keyframes sheen{0%,100%{background-position:0% 0}50%{background-position:100% 0}}
+.hero h1{font-size:clamp(22px,2.6vw,34px);font-weight:500;line-height:1.4;margin-bottom:18px}
+.hero .lead{color:var(--muted);font-size:clamp(15px,1.35vw,17.5px);max-width:62ch}
+.hero-meta{display:flex;flex-wrap:wrap;gap:10px;margin-top:28px}
+.hero-actions{display:flex;flex-wrap:wrap;gap:12px;margin-top:30px}
+.rail{padding:26px 22px}
+.rail h4{font-size:13px;font-weight:500;color:var(--faint);margin-bottom:16px;display:flex;justify-content:space-between;align-items:center}
+.rail ol{list-style:none;position:relative}
+.rail ol::before{content:"";position:absolute;right:21px;top:18px;bottom:18px;width:2px;background:linear-gradient(180deg,var(--yellow),var(--orange));opacity:.55}
+.rail li{display:grid;grid-template-columns:44px 1fr auto;gap:12px;align-items:center;padding:7px 0;position:relative}
+.rail li .b{width:44px;height:44px;border-radius:13px;display:grid;place-items:center;background:linear-gradient(180deg,#243F6B,#0F213D);border:1px solid var(--line);color:var(--yellow);box-shadow:0 8px 18px -10px #000;z-index:1}
+.rail li.core .b{background:linear-gradient(180deg,#FFB08C,#D9754F);color:#06142E;border-color:rgba(255,255,255,.3)}
+.rail li strong{display:block;font-weight:500;font-size:14.5px;direction:ltr;text-align:right;unicode-bidi:isolate}
+.rail li span{display:block;font-size:12px;color:var(--faint);line-height:1.4}
+.rail li em{font-style:normal;font-family:var(--mono);font-size:11px;color:var(--faint)}
+.future{margin-top:clamp(50px,7vw,90px)}
+.future-in{display:grid;grid-template-columns:260px 1fr;gap:28px;align-items:center}
+.future h3{font-size:20px;font-weight:500;line-height:1.5}
+.future h3 + p{color:var(--muted);font-size:14px;margin-top:6px}
+.chips{display:flex;flex-wrap:wrap;gap:10px}
+.chip{display:inline-flex;align-items:center;gap:9px;padding:10px 14px;border-radius:12px;border:1px dashed rgba(245,215,219,.25);background:rgba(245,215,219,.035);font-size:14px;color:var(--text)}
+.chip .ic{color:var(--orange);width:18px;height:18px}
+@media (max-width:980px){.hero-grid,.future-in{grid-template-columns:1fr}}
+
+/* ---------- PHASES ---------- */
+.phases{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:16px;position:relative}
+.phases::before{content:"";position:absolute;top:31px;right:6%;left:6%;height:2px;background:linear-gradient(270deg,var(--yellow),var(--orange));opacity:.45}
+.ph{position:relative}
+.ph .dot{width:64px;height:64px;border-radius:20px;display:grid;place-items:center;margin-bottom:18px;position:relative;z-index:1;
+  background:linear-gradient(180deg,color-mix(in srgb,var(--pc,var(--yellow)) 55%,#243F6B),color-mix(in srgb,var(--pc,var(--yellow)) 20%,#0F213D));
+  border:1px solid color-mix(in srgb,var(--pc,var(--yellow)) 45%,var(--line));box-shadow:0 14px 30px -14px #000, 0 0 0 5px color-mix(in srgb,var(--pc,var(--yellow)) 10%,transparent), inset 0 1px 0 rgba(255,255,255,.15)}
+.ph .dot b{font-family:var(--mono);font-size:18px;font-weight:600;color:#06142E;background:var(--pc,var(--yellow));width:34px;height:34px;border-radius:50%;display:grid;place-items:center;box-shadow:0 4px 10px -3px rgba(0,0,0,.5)}
+.ph::before{content:"";display:none}
+.ph .card{padding:20px 18px;height:calc(100% - 82px)}
+.ph h3{font-size:17px;font-weight:600;line-height:1.45}
+.ph .en-t{font-size:12.5px;color:var(--pc,var(--orange));margin:4px 0 14px;direction:ltr;text-align:right;unicode-bidi:isolate;font-weight:500}
+.ph ul{list-style:none;display:grid;gap:7px}
+.ph li{font-size:13.5px;color:var(--muted);display:flex;gap:8px;align-items:flex-start;line-height:1.55}
+.ph li::before{content:"";width:5px;height:5px;border-radius:50%;background:var(--yellow);opacity:.6;margin-top:.62em;flex:none}
+@media (max-width:1100px){.phases{grid-template-columns:repeat(2,minmax(0,1fr))}.phases::before{display:none}}
+@media (max-width:620px){.phases{grid-template-columns:1fr}}
+
+/* ---------- OPERATIONAL SYSTEM ---------- */
+.ops{display:grid;grid-template-columns:1.15fr .85fr;gap:28px;align-items:stretch}
+.arch{padding:34px 20px;display:flex;flex-direction:column;align-items:center;text-align:center}
+.arch .row3{display:grid;grid-template-columns:repeat(3,auto);gap:18px;justify-content:center;position:relative;padding-top:34px}
+.arch .row3::before{content:"";position:absolute;top:0;right:16%;left:16%;height:34px;border:2px solid rgba(241,145,109,.55);border-bottom:0;border-radius:14px 14px 0 0}
+.arch .row3::after{content:"";position:absolute;top:0;left:50%;width:2px;height:34px;background:rgba(241,145,109,.55)}
+.arch .merge{position:relative;width:70%;height:40px;border:2px solid rgba(245,215,219,.35);border-top:0;border-radius:0 0 14px 14px;margin-top:0}
+.arch .merge::after{content:"";position:absolute;bottom:-34px;left:50%;width:2px;height:34px;background:rgba(245,215,219,.45)}
+.arch .sp{height:34px}
+.pillars{display:grid;gap:12px}
+.pillar{display:grid;grid-template-columns:44px 1fr;gap:14px;align-items:center;padding:16px 18px;border-radius:var(--r-md);background:var(--glass);border:1px solid var(--line-2)}
+.pillar .b{width:44px;height:44px;border-radius:12px;display:grid;place-items:center;background:rgba(245,215,219,.08);color:var(--yellow)}
+.pillar strong{display:block;font-weight:500}
+.pillar span{font-size:13px;color:var(--faint)}
+.once{margin-top:14px;padding:22px 22px;border-radius:var(--r-lg);background:linear-gradient(135deg,rgba(241,145,109,.18),rgba(241,145,109,.04));border:1px solid rgba(241,145,109,.35)}
+.once p{font-size:17px;font-weight:500;line-height:1.7}
+.once small{display:block;margin-top:6px;color:var(--muted);font-size:13px}
+@media (max-width:980px){.ops{grid-template-columns:1fr}}
+@media (max-width:560px){.arch .row3{grid-template-columns:1fr;gap:10px}.arch .row3::before,.arch .row3::after{display:none}.arch .merge{display:none}}
+
+/* ---------- RECEPTION ---------- */
+.rec{display:grid;grid-template-columns:1fr 320px;gap:24px}
+.app{display:grid;grid-template-columns:200px 1fr}
+.side{border-left:1px solid var(--line-2);padding:18px 12px;background:rgba(0,0,0,.12)}
+.side .me{display:flex;gap:10px;align-items:center;padding:6px 8px 16px;border-bottom:1px solid var(--line-2);margin-bottom:12px}
+.av{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;font-size:13px;font-weight:600;background:linear-gradient(135deg,var(--yellow),var(--orange));color:#06142E;flex:none}
+.side .me b{display:block;font-size:13px;font-weight:500}.side .me small{font-size:11px;color:var(--faint)}
+.side a{display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:10px;font-size:13px;color:var(--muted);text-decoration:none}
+.side a.on{background:rgba(241,145,109,.12);color:var(--text)}.side a.on .ic{color:var(--orange)}
+.main{padding:22px}
+.srch{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.field-s{flex:1;min-width:200px;display:flex;align-items:center;gap:10px;padding:12px 14px;border-radius:12px;background:rgba(0,0,0,.22);border:1px solid rgba(241,145,109,.45);box-shadow:0 0 0 4px rgba(241,145,109,.08)}
+.field-s span{font-size:14px}.field-s .ic{color:var(--orange)}
+.seg{display:inline-flex;border-radius:11px;border:1px solid var(--line-2);overflow:hidden;font-size:12.5px}
+.seg span{padding:10px 12px;color:var(--muted)}.seg span.on{background:var(--glass-2);color:var(--text)}
+.found{margin-top:14px;display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:12px;background:rgba(98,227,174,.07);border:1px solid rgba(98,227,174,.25);font-size:13.5px;flex-wrap:wrap}
+.found .ic{color:var(--ok)}
+.fgrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-top:18px}
+.fld{padding:10px 12px;border-radius:11px;background:rgba(0,0,0,.18);border:1px solid var(--line-2);min-width:0}
+.fld label{display:block;font-size:11px;color:var(--faint);margin-bottom:2px}
+.fld div{font-size:14px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.fld.wide{grid-column:span 2}
+.plate{display:inline-flex;direction:ltr;border:1.5px solid #dfe6e2;border-radius:6px;overflow:hidden;font-size:12px;font-weight:600;background:#f4f7f5;color:#0b2019;line-height:1.3}
+.plate i{font-style:normal;padding:2px 6px;border-left:1px solid #b9c4bf}
+.plate i:last-child{border:0;background:#dde7e2}
+.subh{display:flex;justify-content:space-between;align-items:center;margin:22px 0 10px;font-size:13px;color:var(--muted)}
+.photos{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+.shot{aspect-ratio:4/3;border-radius:11px;border:1px solid var(--line-2);background:linear-gradient(160deg,rgba(255,255,255,.06),rgba(0,0,0,.2));display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;font-size:11px;color:var(--faint);position:relative;overflow:hidden}
+.shot svg.car{width:70%;height:auto;color:rgba(236,243,238,.55)}
+.shot .flag{position:absolute;top:6px;right:6px;font-size:10px;padding:1px 7px;border-radius:999px;background:rgba(241,145,109,.85);color:#06142E;font-weight:600}
+.cond{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:14px}
+.cond .box{padding:12px 14px;border-radius:11px;background:rgba(0,0,0,.18);border:1px solid var(--line-2);font-size:13px;color:var(--muted)}
+.cond .box b{display:block;color:var(--text);font-weight:500;font-size:12px;margin-bottom:4px}
+.acts{display:flex;justify-content:space-between;gap:10px;margin-top:18px;flex-wrap:wrap;align-items:center}
+.decide{padding:22px 20px}
+.decide h4{font-weight:500;font-size:15px;margin-bottom:16px}
+.dflow{display:flex;flex-direction:column;align-items:center;gap:0}
+.dflow .node{width:100%;justify-content:center;font-size:13.5px}
+.fork{display:grid;grid-template-columns:1fr 1fr;gap:10px;width:100%;margin-top:4px}
+.fork .col{display:flex;flex-direction:column;align-items:center}
+.fork .lbl{font-size:12px;padding:3px 10px;border-radius:999px;margin-bottom:8px}
+.fork .yes .lbl{background:rgba(98,227,174,.12);color:var(--ok)}.fork .no .lbl{background:rgba(241,145,109,.14);color:var(--orange)}
+.mini{width:100%;padding:9px 10px;border-radius:10px;border:1px solid var(--line-2);background:var(--glass);font-size:12.5px;text-align:center;direction:ltr}
+.mini.hi{border-color:rgba(241,145,109,.45);background:rgba(241,145,109,.1)}
+.vs{width:2px;height:14px;background:rgba(245,215,219,.35)}
+@media (max-width:1100px){.rec{grid-template-columns:1fr}}
+@media (max-width:820px){.app{grid-template-columns:1fr}.side{display:none}.fgrid{grid-template-columns:repeat(2,minmax(0,1fr))}.photos{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
+/* ---------- HISTORY ---------- */
+.hist{display:grid;grid-template-columns:.9fr 1.1fr;gap:24px}
+.tree{padding:28px 26px;font-size:14px}
+.tree .t-title{font-size:13px;color:var(--faint);margin-bottom:14px}
+.tree ul{list-style:none;padding-right:22px;position:relative}
+.tree>ul{padding-right:0}
+.tree li{position:relative;padding:6px 0}
+.tree ul ul li::before{content:"";position:absolute;right:-22px;top:22px;width:16px;height:2px;background:rgba(245,215,219,.3)}
+.tree ul ul::before{content:"";position:absolute;right:-22px;top:-4px;bottom:22px;width:2px;background:rgba(245,215,219,.3)}
+.tn{display:inline-flex;align-items:center;gap:9px;padding:8px 13px;border-radius:11px;background:var(--glass);border:1px solid var(--line-2)}
+.tn.c{background:linear-gradient(180deg,rgba(245,215,219,.16),rgba(245,215,219,.04));border-color:rgba(245,215,219,.35);font-weight:500}
+.tn.v{border-color:rgba(241,145,109,.4)}.tn.v .ic{color:var(--orange)}
+.tn.w{font-family:var(--mono);font-size:12.5px;color:var(--muted)}
+.tn.w.latest{color:var(--text);border-color:rgba(241,145,109,.45);background:rgba(241,145,109,.08)}
+.vh{padding:0;overflow:hidden}
+.vh-top{display:flex;justify-content:space-between;align-items:center;gap:14px;padding:22px 24px;border-bottom:1px solid var(--line-2);flex-wrap:wrap}
+.vh-top h4{font-size:19px;font-weight:600}
+.vh-top p{font-size:13px;color:var(--faint)}
+.vstats{display:grid;grid-template-columns:repeat(3,1fr);border-bottom:1px solid var(--line-2)}
+.vstats div{padding:14px 20px;border-left:1px solid var(--line-2)}.vstats div:last-child{border-left:0}
+.vstats b{display:block;font-size:20px;font-weight:600;direction:ltr;text-align:right}.vstats span{font-size:12px;color:var(--faint)}
+.visits{padding:10px 14px 16px}
+.visit{display:grid;grid-template-columns:auto 1fr auto;gap:14px;align-items:center;padding:14px 10px;border-bottom:1px dashed var(--line-2)}
+.visit:last-child{border:0}
+.visit .wo{font-family:var(--mono);font-size:12.5px;color:var(--yellow);direction:ltr}
+.visit .d{font-size:13.5px}.visit .d small{display:block;color:var(--faint);font-size:12px}
+.keeps{display:flex;flex-wrap:wrap;gap:8px;margin-top:22px}
+.callout{display:flex;gap:14px;align-items:flex-start;margin-top:20px;padding:18px 20px;border-radius:var(--r-md);border:1px solid rgba(98,227,174,.25);background:rgba(98,227,174,.06);font-size:14.5px}
+.callout .ic{color:var(--ok);margin-top:3px}
+@media (max-width:980px){.hist{grid-template-columns:1fr}}
+@media (max-width:560px){.visit{grid-template-columns:1fr;gap:6px}}
+/* ---------- WORK ORDER ---------- */
+.wo-stage{display:grid;grid-template-columns:1fr minmax(0,560px) 1fr;gap:20px;align-items:center}
+.anno{display:grid;gap:18px}
+.anno div{font-size:13.5px;color:var(--muted);padding:14px 16px;border-radius:var(--r-md);border:1px solid var(--line-2);background:var(--glass)}
+.anno b{display:block;color:var(--text);font-weight:500;font-size:14px;margin-bottom:2px}
+.jc{overflow:hidden;border-radius:26px}
+.jc-top{padding:24px 26px 20px;background:linear-gradient(135deg,rgba(241,145,109,.22),rgba(241,145,109,.02) 60%);border-bottom:1px solid var(--line-2);position:relative}
+.jc-top .row{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap}
+.jc-no{font-family:var(--mono);font-size:clamp(20px,2.4vw,26px);font-weight:500;direction:ltr;letter-spacing:.5px}
+.jc-top small{font-size:12px;color:var(--faint);display:block}
+.jc-car{display:flex;align-items:center;gap:14px;margin-top:18px}
+.jc-car .ico{width:54px;height:54px;border-radius:16px;display:grid;place-items:center;background:rgba(0,0,0,.25);border:1px solid var(--line-2);color:var(--yellow)}
+.jc-car h4{font-size:20px;font-weight:600;direction:ltr;text-align:right}
+.jc-body{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1px;background:var(--line-2)}
+.jc-body div{background:rgba(1,32,25,.96);padding:14px 22px}
+.jc-body label{display:block;font-size:11.5px;color:var(--faint);direction:ltr;text-align:right}
+.jc-body span{font-size:14.5px;font-weight:500}
+.jc-prog{padding:18px 22px;border-top:1px solid var(--line-2)}
+.bar{height:6px;border-radius:6px;background:rgba(255,255,255,.07);overflow:hidden}
+.bar i{display:block;height:100%;border-radius:6px;background:linear-gradient(270deg,var(--yellow),var(--orange))}
+.jc-prog .lbls{display:flex;justify-content:space-between;font-size:11.5px;color:var(--faint);margin-top:8px}
+.jc-acts{display:flex;flex-wrap:wrap;gap:8px;padding:18px 22px 22px;border-top:1px solid var(--line-2)}
+.jc-acts .btn{font-size:12.5px;padding:9px 12px}
+.toast{position:fixed;bottom:26px;left:50%;transform:translate(-50%,30px);opacity:0;z-index:80;padding:12px 18px;border-radius:12px;background:rgba(36,63,107,.97);border:1px solid var(--line);font-size:13.5px;display:flex;gap:10px;align-items:center;transition:all .3s;box-shadow:var(--shadow)}
+.toast.show{opacity:1;transform:translate(-50%,0)}.toast .ic{color:var(--ok)}
+@media (max-width:1100px){.wo-stage{grid-template-columns:1fr}.anno{grid-template-columns:1fr 1fr}}
+@media (max-width:560px){.anno{grid-template-columns:1fr}.jc-body{grid-template-columns:1fr}}
+
+/* ---------- TECHNICIAN ---------- */
+.tech{display:grid;grid-template-columns:320px 1fr;gap:30px;align-items:start}
+.tasks{padding:14px 16px 20px}
+.tasks .hi{font-size:12px;color:var(--faint);margin-top:14px}
+.tasks h5{font-size:21px;font-weight:600;margin-bottom:12px}
+.tsum{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px}
+.tsum div{padding:9px;border-radius:12px;background:rgba(255,255,255,.05);text-align:center}
+.tsum b{display:block;font-size:18px}.tsum span{font-size:10.5px;color:var(--faint)}
+.task{padding:13px 14px;border-radius:15px;margin-bottom:10px;background:rgba(255,255,255,.055);border:1px solid var(--line-2)}
+.task.act{border-color:rgba(241,145,109,.55);background:linear-gradient(180deg,rgba(241,145,109,.14),rgba(241,145,109,.03))}
+.task .wo{font-family:var(--mono);font-size:11.5px;color:var(--yellow);direction:ltr;text-align:right}
+.task .car{font-weight:500;font-size:15px;direction:ltr;text-align:right;margin:2px 0 8px}
+.task .ft{display:flex;justify-content:space-between;align-items:center;font-size:11px;color:var(--faint)}
+.tabbar{position:absolute;bottom:0;right:0;left:0;display:flex;justify-content:space-around;padding:12px 10px 18px;background:rgba(0,12,9,.85);border-top:1px solid var(--line-2);font-size:10px;color:var(--faint)}
+.tabbar span{display:flex;flex-direction:column;align-items:center;gap:3px}.tabbar span.on{color:var(--orange)}
+.twin .main{padding:0}
+.tw-head{display:flex;justify-content:space-between;align-items:center;gap:14px;padding:20px 22px;border-bottom:1px solid var(--line-2);flex-wrap:wrap}
+.tw-head h4{font-size:18px;font-weight:600;direction:ltr;text-align:right}
+.tw-head small{font-family:var(--mono);color:var(--yellow);font-size:12px}
+.tw-grid{display:grid;grid-template-columns:1.1fr .9fr}
+.tw-col{padding:20px 22px}
+.tw-col + .tw-col{border-right:1px solid var(--line-2)}
+.tw-col h6{font-size:12.5px;font-weight:500;color:var(--faint);margin-bottom:10px}
+.chk{display:flex;align-items:center;gap:10px;padding:9px 0;font-size:13.5px;border-bottom:1px dashed var(--line-2)}
+.chk .bx{width:20px;height:20px;border-radius:6px;border:1.5px solid var(--line);display:grid;place-items:center;flex:none}
+.chk.on .bx{background:var(--ok);border-color:var(--ok);color:#1B3358}
+.chk .note{margin-inline-start:auto;font-size:11.5px;color:var(--faint)}
+.diag{margin-top:14px;padding:12px 14px;border-radius:12px;background:rgba(0,0,0,.22);border:1px solid var(--line-2);font-size:13px;color:var(--muted);line-height:1.7}
+.stepper{display:grid;gap:8px}
+.stp{display:flex;align-items:center;gap:10px;font-size:13px;padding:9px 12px;border-radius:11px;border:1px solid var(--line-2)}
+.stp.done{color:var(--muted)}.stp.done .ic{color:var(--ok)}
+.stp.cur{border-color:rgba(241,145,109,.55);background:rgba(241,145,109,.1)}
+.stp.next{color:var(--faint);border-style:dashed}
+.tech-caps{display:flex;flex-wrap:wrap;gap:8px;margin-top:22px}
+.devs{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:18px;align-items:center}
+.urlbig{font-family:var(--mono);font-size:14px;direction:ltr;padding:8px 14px;border-radius:10px;background:rgba(0,0,0,.3);border:1px solid var(--line);color:var(--yellow)}
+@media (max-width:1024px){.tech{grid-template-columns:1fr}.tw-grid{grid-template-columns:1fr}.tw-col + .tw-col{border-right:0;border-top:1px solid var(--line-2)}}
+
+/* ---------- TIMELINE ---------- */
+.tl-wrap{display:grid;grid-template-columns:1.1fr .9fr;gap:30px}
+.tl{padding:30px 28px}
+.tl-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;gap:10px;flex-wrap:wrap}
+.ev{display:grid;grid-template-columns:64px 26px 1fr auto;gap:0 14px;position:relative}
+.ev .tm{font-family:var(--mono);font-size:13.5px;color:var(--muted);padding-top:2px;direction:ltr;text-align:left}
+.ev .ax{position:relative;display:flex;justify-content:center}
+.ev .ax::before{content:"";position:absolute;top:0;bottom:0;width:2px;background:linear-gradient(180deg,var(--orange),rgba(245,215,219,.35))}
+.ev:last-child .ax::before{bottom:auto;height:14px}
+.ev .ax i{width:14px;height:14px;border-radius:50%;background:var(--forest);border:2.5px solid var(--yellow);position:relative;z-index:1;margin-top:5px}
+.ev.fin .ax i{background:var(--ok);border-color:var(--ok);box-shadow:0 0 0 5px rgba(98,227,174,.18)}
+.ev.pend .ax i{border-style:dashed;border-color:var(--faint)}
+.ev .bd{padding-bottom:22px}
+.ev .bd b{font-weight:500;font-size:15px;display:block;line-height:1.5}
+.ev .bd span{font-size:12.5px;color:var(--faint)}
+.ev .dur{font-family:var(--mono);font-size:11px;color:var(--orange);background:rgba(241,145,109,.08);border-radius:999px;padding:2px 9px;height:fit-content;direction:ltr;margin-top:2px}
+.ev.pend .bd b{color:var(--faint)}
+.model{display:grid;gap:18px;align-content:start}
+.eq{display:grid;grid-template-columns:1fr auto 1fr;gap:12px;align-items:center;text-align:center}
+.eq .box{padding:18px 12px;border-radius:var(--r-md);border:1px solid var(--line-2);background:var(--glass)}
+.eq .box b{display:block;direction:ltr;font-weight:500}.eq .box span{font-size:12px;color:var(--faint)}
+.eq .plus{font-size:26px;color:var(--orange);font-weight:300}
+.anat{padding:20px 22px}
+.anat h5{font-size:13px;color:var(--faint);font-weight:500;margin-bottom:12px}
+.anat pre{font-family:var(--mono);font-size:12.5px;line-height:1.9;direction:ltr;text-align:left;color:var(--muted);white-space:pre-wrap}
+.anat pre .k{color:var(--yellow)}.anat pre .s{color:var(--ok)}.anat pre .p{color:var(--orange)}
+.qs{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.qs div{padding:14px;border-radius:12px;border:1px solid var(--line-2);background:var(--glass);font-size:14px;display:flex;gap:10px;align-items:center}
+.qs .ic{color:var(--orange)}
+@media (max-width:1024px){.tl-wrap{grid-template-columns:1fr}}
+@media (max-width:520px){.ev{grid-template-columns:52px 22px 1fr}.ev .dur{grid-column:3;justify-self:start;margin:-14px 0 16px}.qs{grid-template-columns:1fr}}
+
+/* ---------- JOURNEY ---------- */
+.journey{padding:34px 26px}
+.jr{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:26px 18px;position:relative;counter-reset:j}
+.js-step{position:relative;padding:16px 14px 14px;border-radius:16px;background:linear-gradient(180deg,rgba(255,255,255,.07),rgba(255,255,255,.02));border:1px solid var(--line-2);min-height:112px;display:flex;flex-direction:column;gap:8px}
+.js-step .n{font-family:var(--mono);font-size:11px;color:var(--faint)}
+.js-step .ic{color:var(--yellow)}
+.js-step b{font-weight:500;font-size:14px;line-height:1.45}
+.js-step.dec{border-color:rgba(245,215,219,.45);background:linear-gradient(180deg,rgba(245,215,219,.12),rgba(245,215,219,.02))}
+.js-step.dec small{font-size:11.5px;color:var(--muted)}
+.js-step.key{border-color:rgba(241,145,109,.5);background:linear-gradient(180deg,rgba(241,145,109,.17),rgba(241,145,109,.03))}
+.js-step.key .ic{color:var(--orange)}
+.js-step.end{border-color:rgba(98,227,174,.45);background:linear-gradient(180deg,rgba(98,227,174,.14),rgba(98,227,174,.02))}
+.js-step.end .ic{color:var(--ok)}
+.js-step:not(.last)::after{content:"";position:absolute;left:-17px;top:50%;width:16px;height:2px;background:var(--orange);opacity:.7}
+.js-step.eor::after{display:none}
+.jr-legend{display:flex;gap:16px;flex-wrap:wrap;margin-top:24px;font-size:12.5px;color:var(--muted)}
+.jr-legend span{display:inline-flex;align-items:center;gap:8px}
+.jr-legend i{width:12px;height:12px;border-radius:4px;display:inline-block}
+.zones{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:22px}
+.zone{padding:12px 14px;border-radius:12px;border-top:3px solid var(--c);background:var(--glass);font-size:12.5px;color:var(--muted)}
+.zone b{display:block;color:var(--text);font-weight:500;font-size:13.5px}
+@media (max-width:1100px){.jr{grid-template-columns:repeat(3,minmax(0,1fr))}.js-step.eor::after{display:block}.js-step.e3::after{display:none}}
+@media (max-width:640px){.jr{grid-template-columns:1fr;gap:18px}.js-step::after{display:none!important}.js-step:not(.last)::before{content:"";position:absolute;bottom:-18px;right:28px;width:2px;height:18px;background:var(--orange);opacity:.6}.zones{grid-template-columns:1fr 1fr}}
+/* ---------- DASHBOARD ---------- */
+.dash .app{grid-template-columns:210px 1fr}
+.dtop{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:18px}
+.dtop h4{font-size:20px;font-weight:600}.dtop p{font-size:12.5px;color:var(--faint)}
+.dtop .r{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.kpis{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:12px}
+.kpi{padding:14px 16px;border-radius:16px;background:linear-gradient(180deg,rgba(255,255,255,.07),rgba(255,255,255,.02));border:1px solid var(--line-2);position:relative;overflow:hidden}
+.kpi label{font-size:12px;color:var(--faint);display:flex;align-items:center;gap:6px}
+.kpi b{display:block;font-size:30px;font-weight:600;line-height:1.3;margin-top:4px;font-variant-numeric:tabular-nums}
+.kpi small{font-size:11px;color:var(--faint)}
+.kpi.o{border-color:rgba(241,145,109,.45)}.kpi.o b{color:var(--orange)}
+.kpi.r{border-color:rgba(255,111,94,.4)}.kpi.r b{color:var(--bad)}
+.kpi.g b{color:var(--ok)}.kpi.yl b{color:var(--yellow)}
+.kpi .spark{position:absolute;left:12px;top:14px;width:56px;height:22px;opacity:.7}
+.drow{display:grid;grid-template-columns:1.35fr 1fr;gap:14px;margin-top:14px}
+.drow3{display:grid;grid-template-columns:1.1fr 1fr 1fr;gap:14px;margin-top:14px}
+.panel-c{padding:16px 18px;border-radius:16px;background:rgba(0,0,0,.16);border:1px solid var(--line-2);min-width:0}
+.panel-c h6{font-size:13.5px;font-weight:500;margin-bottom:12px;display:flex;justify-content:space-between;align-items:center;gap:8px}
+.panel-c h6 span{font-size:11.5px;color:var(--faint);font-weight:300}
+.chart svg{width:100%;height:auto;display:block}
+.donut-wrap{display:grid;grid-template-columns:150px 1fr;gap:16px;align-items:center}
+.legend{display:grid;gap:9px}
+.legend div{display:flex;align-items:center;gap:10px;font-size:13px}
+.legend i{width:10px;height:10px;border-radius:3px;flex:none}
+.legend b{margin-inline-start:auto;font-weight:500}
+.tperf{display:grid;gap:14px}
+.tp{display:grid;grid-template-columns:34px 1fr;gap:12px;align-items:center}
+.tp .nm{display:flex;justify-content:space-between;font-size:13.5px;margin-bottom:5px;gap:8px;flex-wrap:wrap}
+.tp .nm small{font-size:11.5px;color:var(--faint);direction:ltr}
+.stack{display:flex;height:8px;border-radius:6px;overflow:hidden;background:rgba(255,255,255,.06)}
+.stack i{display:block;height:100%}
+.avgs{display:grid;gap:10px}
+.avg{display:flex;justify-content:space-between;align-items:center;padding:10px 12px;border-radius:11px;background:rgba(255,255,255,.04);font-size:13px}
+.avg b{font-weight:500;direction:ltr;unicode-bidi:isolate;white-space:nowrap;font-variant-numeric:tabular-nums}.avg > span:last-child{white-space:nowrap}
+.avg em{font-style:normal;font-size:11px;padding:1px 7px;border-radius:999px;margin-inline-start:8px}
+.up{color:var(--ok);background:rgba(98,227,174,.1)}.dn{color:var(--bad);background:rgba(255,111,94,.1)}
+.feed{display:grid;gap:12px;font-size:13px}
+.fi{display:grid;grid-template-columns:10px 1fr auto;gap:10px;align-items:start}
+.fi i{width:8px;height:8px;border-radius:50%;margin-top:.55em}
+.fi small{font-family:var(--mono);font-size:11px;color:var(--faint)}
+.late{display:grid;gap:9px}
+.lt{display:flex;justify-content:space-between;gap:8px;align-items:center;padding:10px 12px;border-radius:11px;border:1px solid rgba(255,111,94,.3);background:rgba(255,111,94,.06);font-size:12.5px}
+.lt .code{color:var(--yellow)}
+@media (max-width:1200px){.kpis{grid-template-columns:repeat(3,minmax(0,1fr))}.drow,.drow3{grid-template-columns:1fr}}
+@media (max-width:820px){.dash .app{grid-template-columns:1fr}}
+@media (max-width:520px){.kpis{grid-template-columns:repeat(2,minmax(0,1fr))}.donut-wrap{grid-template-columns:1fr;justify-items:center}}
+
+/* ---------- SUPERVISOR ---------- */
+.filters{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:16px}
+.sel{display:inline-flex;align-items:center;gap:8px;padding:9px 12px;border-radius:11px;border:1px solid var(--line-2);background:rgba(0,0,0,.2);font-size:13px;color:var(--muted);cursor:pointer;font-family:inherit}
+.sel b{color:var(--text);font-weight:500}.sel .ic{width:14px;height:14px}
+.sel.on{border-color:rgba(241,145,109,.5);color:var(--text)}
+.sums{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-bottom:16px}
+.sum{display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:13px;background:var(--glass);border:1px solid var(--line-2)}
+.sum b{font-size:22px;font-weight:600;line-height:1}.sum span{font-size:12px;color:var(--faint);line-height:1.35}
+.sum .b{width:38px;height:38px;border-radius:11px;display:grid;place-items:center;flex:none}
+table.tbl{width:100%;border-collapse:collapse;min-width:760px;font-size:13.5px}
+.tbl th{font-weight:400;font-size:12px;color:var(--faint);text-align:right;padding:10px 12px;border-bottom:1px solid var(--line-2);white-space:nowrap}
+.tbl td{padding:13px 12px;border-bottom:1px solid rgba(255,255,255,.05);white-space:nowrap;vertical-align:middle}
+.tbl tr:hover td{background:rgba(255,255,255,.025)}
+.tbl .code{color:var(--yellow)}
+.tbl .who{display:flex;align-items:center;gap:8px}
+.tbl .who .av{width:26px;height:26px;font-size:11px}
+.dur-c{display:flex;align-items:center;gap:8px;direction:ltr;justify-content:flex-end;font-family:var(--mono);font-size:12.5px}
+.dur-c .mb{width:60px;height:5px;border-radius:4px;background:rgba(255,255,255,.07);overflow:hidden}
+.dur-c .mb i{display:block;height:100%}
+.unassigned td{background:rgba(245,215,219,.03)}
+.sup-bottom{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:16px}
+.techs{display:flex;flex-wrap:wrap;gap:8px}
+.tchip{display:inline-flex;align-items:center;gap:8px;padding:6px 12px 6px 6px;border-radius:999px;border:1px solid var(--line-2);font-size:12.5px}
+.tchip .av{width:24px;height:24px;font-size:10px}
+.tchip.busy{border-color:rgba(241,145,109,.4)}.tchip.free{border-color:rgba(98,227,174,.4)}
+.tchip em{font-style:normal;font-size:11px;color:var(--faint)}
+@media (max-width:900px){.sums{grid-template-columns:repeat(2,minmax(0,1fr))}.sup-bottom{grid-template-columns:1fr}}
+
+/* ---------- TRACKING ---------- */
+.trk{display:grid;grid-template-columns:340px 1fr;gap:clamp(24px,4vw,56px);align-items:center}
+.tk{padding:48px 18px 20px}
+.tk .logo{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--muted);margin-bottom:18px}
+.tk .logo .mark{width:26px;height:26px;border-radius:8px}.tk .logo .mark span{font-size:11px}
+.tk .carc{padding:16px;border-radius:18px;background:linear-gradient(135deg,rgba(241,145,109,.2),rgba(255,255,255,.03));border:1px solid rgba(241,145,109,.35);margin-bottom:14px}
+.tk .carc h5{font-size:19px;font-weight:600;direction:ltr;text-align:right}
+.tk .carc .code{font-size:11.5px;color:var(--yellow)}
+.tk .carc .now2{margin-top:10px;display:flex;justify-content:space-between;align-items:center}
+.tsteps{padding:14px 16px;border-radius:18px;background:rgba(255,255,255,.045);border:1px solid var(--line-2)}
+.tsteps h6{font-size:12px;color:var(--faint);font-weight:400;margin-bottom:8px}
+.ts{display:flex;align-items:center;gap:12px;padding:7px 0;font-size:13.5px;position:relative}
+.ts .c{width:22px;height:22px;border-radius:50%;display:grid;place-items:center;flex:none;border:2px solid var(--faint);position:relative;z-index:1;background:#0F213D}
+.ts.d .c{background:var(--ok);border-color:var(--ok);color:#1B3358}
+.ts.a .c{border-color:var(--orange);box-shadow:0 0 0 5px rgba(241,145,109,.18)}
+.ts.a .c::after{content:"";width:8px;height:8px;border-radius:50%;background:var(--orange);animation:pulse 1.6s ease-in-out infinite}
+@keyframes pulse{50%{transform:scale(.55);opacity:.6}}
+.ts.a{font-weight:500;color:var(--orange)}
+.ts.p{color:var(--faint)}
+.ts:not(:last-child)::before{content:"";position:absolute;right:10px;top:26px;height:calc(100% - 14px);width:2px;background:rgba(255,255,255,.1)}
+.ts.d:not(:last-child)::before{background:var(--ok)}
+.tk .meta{display:flex;justify-content:space-between;font-size:11.5px;color:var(--faint);margin-top:12px;padding:0 4px}
+.tk .help{margin-top:12px;display:flex;gap:8px}
+.tk .help span{flex:1;text-align:center;padding:10px;border-radius:12px;font-size:12px;background:rgba(255,255,255,.06);border:1px solid var(--line-2)}
+.tk .help span.w{background:rgba(98,227,174,.12);border-color:rgba(98,227,174,.3);color:var(--ok)}
+.tokcmp{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:18px}
+.tokc{padding:18px;border-radius:var(--r-md);border:1px solid var(--line-2);background:var(--glass)}
+.tokc .u{font-family:var(--mono);font-size:14px;direction:ltr;text-align:left;margin:8px 0;padding:8px 10px;border-radius:9px;background:rgba(0,0,0,.25);overflow-wrap:anywhere}
+.tokc.bad{border-color:rgba(255,111,94,.35)}.tokc.bad .u{color:var(--bad);text-decoration:line-through;text-decoration-thickness:1px}
+.tokc.good{border-color:rgba(98,227,174,.35)}.tokc.good .u{color:var(--ok)}
+.tokc p{font-size:13px;color:var(--muted)}
+.hidden-list{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.hl{display:flex;align-items:center;gap:10px;padding:12px 14px;border-radius:12px;background:rgba(255,111,94,.05);border:1px solid rgba(255,111,94,.18);font-size:13.5px}
+.hl .ic{color:var(--bad)}
+.shows{display:flex;gap:8px;flex-wrap:wrap;margin:14px 0 22px}
+@media (max-width:980px){.trk{grid-template-columns:1fr}}
+@media (max-width:560px){.tokcmp,.hidden-list{grid-template-columns:1fr}}
+/* ---------- DEPARTMENTS ---------- */
+.depts{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:12px}
+.dp{padding:20px 16px;border-radius:20px;text-align:center;position:relative;overflow:hidden}
+.dp{border-top:3px solid color-mix(in srgb,var(--dc,var(--yellow)) 70%,transparent)}
+.dp .b{width:52px;height:52px;border-radius:16px;margin:0 auto 12px;display:grid;place-items:center;background:color-mix(in srgb,var(--dc,var(--yellow)) 16%,transparent);border:1px solid color-mix(in srgb,var(--dc,var(--yellow)) 40%,transparent);color:var(--dc,var(--yellow))}
+.dp h4{font-size:16px;font-weight:600}
+.dp .en2{font-size:12px;color:var(--faint);direction:ltr}
+.dp .cnt{margin-top:12px;font-size:12px;color:var(--muted)}
+.dp .cnt b{font-size:18px;color:var(--dc,var(--text));font-weight:600;margin-inline-end:4px}
+.route{margin-top:26px;padding:26px 24px}
+.route h5{font-size:14px;font-weight:500;margin-bottom:6px}.route > p{font-size:13px;color:var(--faint);margin-bottom:22px}
+.rt{display:flex;align-items:center;gap:0;direction:ltr}
+.rt .st2{display:flex;flex-direction:column;align-items:center;gap:8px;flex:none}
+.rt .st2 i{width:18px;height:18px;border-radius:50%;border:3px solid var(--yellow);background:var(--forest)}
+.rt .st2.on i{border-color:var(--orange);background:var(--orange);box-shadow:0 0 0 6px rgba(241,145,109,.2)}
+.rt .st2.end i{border-color:var(--ok);background:var(--ok)}
+.rt .st2 span{font-size:12.5px;font-weight:500}
+.rt .st2 small{font-size:11px;color:var(--faint);margin-top:-6px}
+.rt .ln{flex:1;min-width:24px;height:2px;background:linear-gradient(90deg,var(--yellow),var(--orange));margin-bottom:38px;opacity:.6}
+@media (max-width:1180px){.depts{grid-template-columns:repeat(4,minmax(0,1fr))}}
+@media (max-width:640px){.depts{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
+/* ---------- PERMISSIONS ---------- */
+.mx{min-width:820px;width:100%;border-collapse:separate;border-spacing:0;font-size:13.5px}
+.mx th,.mx td{padding:12px 14px;text-align:center;border-bottom:1px solid rgba(255,255,255,.055)}
+.mx thead th{position:sticky;top:0;background:rgba(15,33,61,.98);font-weight:500;font-size:13px;vertical-align:bottom}
+.mx thead th .ic{display:block;margin:0 auto 6px;color:var(--yellow)}
+.mx thead th small{display:block;font-size:11px;color:var(--faint);font-weight:300;direction:ltr}
+.mx td:first-child,.mx th:first-child{text-align:right;direction:ltr;unicode-bidi:isolate}
+.mx td:first-child{font-weight:400;color:var(--text);text-align:left}
+.mx th:first-child{text-align:left}
+.mx .grp td{background:rgba(245,215,219,.04);font-size:12px;color:var(--yellow);text-align:left;padding:8px 14px}
+.y,.pt,.nn{display:inline-grid;place-items:center;width:28px;height:28px;border-radius:9px}
+.y{background:rgba(98,227,174,.14);color:var(--ok)}
+.pt{background:rgba(245,215,219,.12);color:var(--yellow);font-size:11px;font-weight:600;width:auto;padding:0 9px}
+.nn{color:rgba(255,255,255,.18)}
+.mx col.own{background:rgba(241,145,109,.035)}
+.rbac{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:24px}
+.rb{padding:22px}
+.rb h5{font-size:15px;font-weight:500;margin-bottom:14px;display:flex;align-items:center;gap:10px}
+.rb.bad h5 .ic{color:var(--bad)}.rb.good h5 .ic{color:var(--ok)}
+.req{display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:12.5px;direction:ltr;justify-content:flex-end}
+.req span{padding:7px 11px;border-radius:9px;background:rgba(0,0,0,.25);border:1px solid var(--line-2);font-family:var(--mono);font-size:11.5px}
+.req span.chk2{border-color:rgba(241,145,109,.5);color:var(--orange)}
+.req span.deny{border-color:rgba(255,111,94,.5);color:var(--bad)}
+.req span.allow{border-color:rgba(98,227,174,.5);color:var(--ok)}
+.req .a{color:var(--faint)}
+.rb p{font-size:13.5px;color:var(--muted);margin-top:14px}
+.legend2{display:flex;gap:18px;flex-wrap:wrap;margin-top:14px;font-size:12.5px;color:var(--muted);align-items:center}
+@media (max-width:820px){.rbac{grid-template-columns:1fr}}
+
+/* ---------- DATA MODEL ---------- */
+.erd{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:18px}
+.cluster{padding:16px;border-radius:22px;border:1px dashed var(--c,var(--line));background:rgba(255,255,255,.02)}
+.cluster > h5{font-size:12.5px;font-weight:500;color:var(--c,var(--yellow));margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.tbl-c{border-radius:13px;overflow:hidden;border:1px solid var(--line-2);background:rgba(1,30,24,.9);margin-bottom:12px;direction:ltr;text-align:left;box-shadow:0 14px 30px -20px #000}
+.tbl-c:last-child{margin-bottom:0}
+.tbl-c .th{display:flex;align-items:center;gap:8px;padding:9px 12px;background:rgba(255,255,255,.05);border-bottom:1px solid var(--line-2);font-family:var(--mono);font-size:12.5px;font-weight:500}
+.tbl-c .th .ic{width:14px;height:14px;color:var(--c,var(--yellow))}
+.tbl-c ul{list-style:none;padding:7px 12px 9px}
+.tbl-c li{display:flex;justify-content:space-between;gap:8px;font-family:var(--mono);font-size:11.5px;color:var(--muted);padding:2px 0}
+.tbl-c li em{font-style:normal;color:var(--faint);font-size:10.5px}
+.tbl-c li.pk{color:var(--yellow)}.tbl-c li.fk{color:var(--info)}.tbl-c li.hl2{color:var(--orange)}
+.tbl-c.star{border-color:rgba(241,145,109,.55);box-shadow:0 0 0 4px rgba(241,145,109,.07),0 18px 36px -20px #000}
+.dm-bottom{display:grid;grid-template-columns:.8fr 1.2fr;gap:22px;margin-top:24px}
+.chain{padding:22px;display:flex;flex-direction:column;align-items:center}
+.chain .node{width:100%;max-width:280px;justify-content:center;direction:ltr}
+.chain .vline{height:18px}
+.hs{padding:22px}
+.hs h5{font-size:15px;font-weight:500;margin-bottom:4px}
+.hs > p{font-size:13px;color:var(--faint);margin-bottom:16px}
+.cur{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 16px;border-radius:12px;border:1px solid rgba(241,145,109,.45);background:rgba(241,145,109,.08);margin-bottom:14px;flex-wrap:wrap}
+.cur .code{color:var(--muted)}
+.htbl{width:100%;border-collapse:collapse;font-family:var(--mono);font-size:11.5px;direction:ltr;text-align:left;min-width:460px}
+.htbl th{color:var(--faint);font-weight:400;padding:7px 10px;border-bottom:1px solid var(--line-2)}
+.htbl td{padding:7px 10px;border-bottom:1px solid rgba(255,255,255,.04);color:var(--muted)}
+.htbl tr.new td{color:var(--text);background:rgba(241,145,109,.06)}
+.hs .keep{margin-top:14px;font-size:13.5px;display:flex;gap:10px;align-items:center;color:var(--ok)}
+@media (max-width:1100px){.erd{grid-template-columns:repeat(2,minmax(0,1fr))}.dm-bottom{grid-template-columns:1fr}}
+@media (max-width:620px){.erd{grid-template-columns:1fr}}
+
+/* ---------- DATA FLOW ---------- */
+.df{padding:34px 26px}
+.df-grid{display:grid;grid-template-columns:200px 1fr 220px;gap:24px;align-items:center}
+.clients{display:grid;gap:10px}
+.clients .node{justify-content:flex-start;font-size:13px;padding:10px 14px}
+.pipe{position:relative;display:flex;flex-direction:column;gap:10px}
+.layer{display:grid;grid-template-columns:40px 1fr auto;align-items:center;gap:14px;padding:13px 16px;border-radius:14px;border:1px solid var(--line-2);background:linear-gradient(90deg,rgba(255,255,255,.06),rgba(255,255,255,.02));position:relative}
+.layer .n{font-family:var(--mono);font-size:11px;color:var(--faint);text-align:center}
+.layer b{font-weight:500;direction:ltr;text-align:right;unicode-bidi:isolate;display:block}
+.layer span{font-size:12px;color:var(--faint)}
+.layer .ic{color:var(--yellow)}
+.layer.gate{border-color:rgba(241,145,109,.5);background:linear-gradient(90deg,rgba(241,145,109,.16),rgba(241,145,109,.03))}
+.layer.gate .ic{color:var(--orange)}
+.layer.dbl{border-color:rgba(245,215,219,.5);background:linear-gradient(90deg,rgba(245,215,219,.14),rgba(245,215,219,.02))}
+.pipe .beam{position:absolute;right:-14px;top:10px;bottom:10px;width:3px;border-radius:3px;background:linear-gradient(180deg,var(--yellow),var(--orange));opacity:.5}
+.pipe .beam i{position:absolute;right:-3.5px;width:10px;height:10px;border-radius:50%;background:var(--yellow);box-shadow:0 0 14px var(--yellow);animation:beam 3.2s cubic-bezier(.5,0,.5,1) infinite}
+@keyframes beam{0%{top:0;opacity:0}10%{opacity:1}90%{opacity:1}100%{top:100%;opacity:0}}
+.ret{padding:18px;border-radius:var(--r-md);border:1px solid rgba(98,227,174,.35);background:rgba(98,227,174,.06);font-size:13.5px}
+.ret b{display:flex;align-items:center;gap:8px;color:var(--ok);font-weight:500;margin-bottom:8px}
+.ret ul{list-style:none;display:grid;gap:6px;color:var(--muted);font-size:12.5px}
+.nodirect{margin-top:22px;display:flex;align-items:center;gap:14px;padding:14px 18px;border-radius:14px;border:1px dashed rgba(255,111,94,.4);background:rgba(255,111,94,.05);font-size:13.5px;flex-wrap:wrap}
+.nodirect .ic{color:var(--bad)}
+@media (max-width:1024px){.df-grid{grid-template-columns:1fr}.clients{grid-template-columns:repeat(auto-fit,minmax(150px,1fr))}}
+.mx td:first-child,.mx th:first-child,.mx .grp td{text-align:right}
+
+/* ---------- SERVER ---------- */
+.srv{display:grid;grid-template-columns:1.3fr .7fr;gap:24px}
+.rack{padding:22px;border-radius:26px;border:1.5px solid rgba(245,215,219,.35);background:linear-gradient(180deg,rgba(245,215,219,.06),rgba(0,0,0,.15));position:relative}
+.rack-h{display:flex;align-items:center;gap:14px;margin-bottom:18px;flex-wrap:wrap}
+.rack-h .b{width:50px;height:50px;border-radius:15px;display:grid;place-items:center;background:linear-gradient(180deg,#FFB08C,#D9754F);color:#06142E}
+.rack-h b{display:block;font-size:17px;font-weight:600;direction:ltr;text-align:right}
+.rack-h span{font-size:12.5px;color:var(--muted)}
+.leds{margin-inline-start:auto;display:flex;gap:6px;direction:ltr}
+.leds i{width:8px;height:8px;border-radius:50%;background:var(--ok);box-shadow:0 0 8px var(--ok);animation:blink 2.2s infinite}
+.leds i:nth-child(2){animation-delay:.5s}.leds i:nth-child(3){animation-delay:1.1s;background:var(--yellow);box-shadow:0 0 8px var(--yellow)}
+@keyframes blink{50%{opacity:.35}}
+.os{padding:16px;border-radius:18px;border:1px solid var(--line-2);background:rgba(0,0,0,.18)}
+.os-h{display:flex;align-items:center;gap:10px;font-size:13.5px;margin-bottom:14px;direction:ltr;justify-content:flex-end}
+.os-h .ic{color:var(--yellow)}
+.dock{padding:16px;border-radius:16px;border:1px dashed rgba(140,203,255,.45);background:rgba(140,203,255,.04)}
+.dock-h{display:flex;align-items:center;gap:10px;font-size:13.5px;color:var(--info);margin-bottom:14px;direction:ltr;justify-content:flex-end}
+.ctrs{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px}
+.ctr{padding:14px 10px;border-radius:13px;background:linear-gradient(180deg,rgba(255,255,255,.08),rgba(255,255,255,.02));border:1px solid var(--line-2);text-align:center;direction:ltr}
+.ctr .ic{margin:0 auto 8px;color:var(--yellow);display:block}
+.ctr b{display:block;font-size:12.5px;font-weight:500;line-height:1.35}
+.ctr small{display:block;font-size:10.5px;color:var(--faint);margin-top:4px}
+.ctr.px{border-color:rgba(98,227,174,.4)}.ctr.px .ic{color:var(--ok)}
+.ctr.api{border-color:rgba(241,145,109,.5)}.ctr.api .ic{color:var(--orange)}
+.ctr.pg{border-color:rgba(245,215,219,.5)}
+.mon{margin-top:12px;display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:13px;border:1px solid var(--line-2);background:rgba(255,255,255,.03);font-size:13px;direction:ltr;justify-content:flex-end;flex-wrap:wrap}
+.mon .ic{color:var(--info)}
+.mon .wave{width:120px;height:24px}
+.domains{display:grid;gap:10px;align-content:start}
+.dmn{padding:14px 16px;border-radius:14px;border:1px solid var(--line-2);background:var(--glass);display:grid;grid-template-columns:36px 1fr;gap:12px;align-items:center}
+.dmn .b{width:36px;height:36px;border-radius:10px;display:grid;place-items:center;background:rgba(245,215,219,.07);color:var(--yellow)}
+.dmn .code{font-size:13px;display:block;color:var(--text)}
+.dmn span{font-size:12px;color:var(--faint)}
+.dmn.pub{border-color:rgba(98,227,174,.35)}.dmn.pub .b{color:var(--ok);background:rgba(98,227,174,.08)}
+@media (max-width:1100px){.srv{grid-template-columns:1fr}.ctrs{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media (max-width:560px){.ctrs{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
+/* ---------- SECURITY ---------- */
+.sec-strip{padding:26px;display:flex;align-items:center;gap:14px;flex-wrap:wrap;justify-content:center;margin-bottom:24px}
+.sec-strip .node{font-size:13.5px}
+.sec-strip .lock{display:flex;flex-direction:column;align-items:center;font-size:11px;color:var(--ok);gap:2px}
+.sec-strip .x{position:relative;width:100%;display:flex;justify-content:center;align-items:center;gap:10px;font-size:13px;color:var(--bad);padding-top:10px;border-top:1px dashed rgba(255,111,94,.3);margin-top:6px}
+.secg{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px}
+.sc{padding:18px 16px;border-radius:18px}
+.sc .ic{color:var(--orange);margin-bottom:12px}
+.sc b{display:block;font-weight:500;font-size:14px;direction:ltr;text-align:right;unicode-bidi:isolate;line-height:1.4}
+.sc p{font-size:12.5px;color:var(--muted);margin-top:6px;line-height:1.65}
+@media (max-width:1180px){.secg{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media (max-width:720px){.secg{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:440px){.secg{grid-template-columns:1fr}}
+
+/* ---------- LIVE FLOW ---------- */
+.live{display:grid;grid-template-columns:1.2fr .8fr;gap:24px;align-items:start}
+.lanes{display:grid;gap:14px}
+.lane{padding:18px 18px;border-radius:20px;border:1px solid var(--line-2);background:var(--glass);transition:border-color .4s,background .4s}
+.lane.on{border-color:rgba(241,145,109,.55);background:linear-gradient(90deg,rgba(241,145,109,.10),rgba(255,255,255,.02))}
+.lane h5{font-size:14px;font-weight:500;margin-bottom:12px;display:flex;align-items:center;gap:10px}
+.lane h5 i{font-style:normal;font-family:var(--mono);font-size:11px;color:var(--orange);border:1px solid rgba(241,145,109,.4);border-radius:7px;padding:1px 7px}
+.steps{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.steps span{font-size:12.5px;padding:7px 11px;border-radius:10px;background:rgba(0,0,0,.22);border:1px solid var(--line-2);transition:all .35s;white-space:nowrap}
+.steps span.lit{border-color:var(--orange);color:#06142E;background:var(--orange);box-shadow:0 8px 20px -8px rgba(241,145,109,.8)}
+.steps .ar{color:var(--faint);font-size:12px;padding:0;border:0;background:none}
+.mini-dash{padding:20px}
+.mini-dash h5{font-size:14px;font-weight:500;display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
+.mk{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px}
+.mk div{padding:12px;border-radius:13px;background:rgba(0,0,0,.2);border:1px solid var(--line-2);text-align:center;transition:all .4s}
+.mk div.bump{border-color:var(--orange);box-shadow:0 0 0 4px rgba(241,145,109,.14)}
+.mk b{display:block;font-size:26px;font-weight:600;font-variant-numeric:tabular-nums}
+.mk span{font-size:11.5px;color:var(--faint)}
+.mrow{display:flex;justify-content:space-between;align-items:center;padding:11px 12px;border-radius:11px;background:rgba(255,255,255,.04);font-size:13px;margin-bottom:8px;gap:8px;flex-wrap:wrap}
+.mrow .code{color:var(--yellow)}
+.sim{display:flex;gap:10px;margin-top:6px;flex-wrap:wrap}
+.nomanual{margin-top:18px;padding:18px 20px;border-radius:16px;border:1px solid rgba(245,215,219,.3);background:rgba(245,215,219,.05);font-size:14.5px;line-height:1.8}
+.nomanual b{color:var(--yellow);font-weight:500}
+@media (max-width:1024px){.live{grid-template-columns:1fr}}
+
+/* ---------- FINAL ECOSYSTEM ---------- */
+.eco{padding:clamp(28px,4vw,50px) clamp(14px,3vw,40px);display:flex;flex-direction:column;align-items:center;text-align:center;position:relative;overflow:hidden}
+.eco::after{content:"";position:absolute;width:520px;height:520px;border-radius:50%;top:36%;left:50%;transform:translate(-50%,-50%);background:radial-gradient(circle,rgba(241,145,109,.18),transparent 65%);pointer-events:none}
+.eco .node{position:relative;z-index:1;min-width:210px;justify-content:center;direction:ltr}
+.eco .node.big{font-size:16px;padding:16px 26px}
+.eco .row3{display:grid;grid-template-columns:repeat(3,auto);gap:clamp(12px,3vw,40px);justify-content:center;position:relative;padding:34px 0;z-index:1}
+.eco .row3::before{content:"";position:absolute;top:0;right:17%;left:17%;height:34px;border:2px solid rgba(241,145,109,.55);border-bottom:0;border-radius:14px 14px 0 0}
+.eco .row3::after{content:"";position:absolute;bottom:0;right:17%;left:17%;height:34px;border:2px solid rgba(245,215,219,.4);border-top:0;border-radius:0 0 14px 14px}
+.eco .mid{position:relative;z-index:1;width:2px;height:34px;background:rgba(245,215,219,.45);margin-top:-34px}
+.eco .top0{width:2px;height:34px;background:rgba(241,145,109,.55);margin-bottom:-34px;position:relative;z-index:1}
+.eco .tl2{font-size:12px;color:var(--faint);display:block}
+.eco .node.del{border-color:rgba(98,227,174,.5);background:linear-gradient(180deg,rgba(98,227,174,.18),rgba(98,227,174,.04))}
+.eco .node.del .ic{color:var(--ok)}
+@media (max-width:760px){.eco .row3{grid-template-columns:1fr;gap:10px;padding:14px 0}.eco .row3::before,.eco .row3::after,.eco .mid,.eco .top0{display:none}.eco .node{min-width:0;width:100%}}
+
+/* ---------- CLOSING ---------- */
+.closing{text-align:center;padding:clamp(100px,12vw,170px) 0!important}
+.closing blockquote{font-size:clamp(24px,3.6vw,44px);font-weight:500;line-height:1.55;max-width:26ch;margin:0 auto;position:relative}
+.closing blockquote::before{content:"";display:block;width:64px;height:4px;border-radius:4px;margin:0 auto 34px;background:linear-gradient(90deg,var(--yellow),var(--orange))}
+.closing .summary{max-width:70ch;margin:40px auto 0;color:var(--muted);font-size:clamp(15px,1.4vw,18px);line-height:2}
+.closing .wordmark{text-align:center;font-size:clamp(34px,5vw,64px);margin-top:60px;letter-spacing:-1px}
+
+footer{position:relative;z-index:2;border-top:1px solid var(--line-2);padding:34px 0 44px;background:rgba(0,10,7,.5)}
+footer .wrap{display:flex;justify-content:space-between;align-items:center;gap:20px;flex-wrap:wrap}
+footer .cred b{display:block;font-weight:500;font-size:15px}
+footer .cred span{display:block;font-size:13px;color:var(--muted);direction:ltr;text-align:right;unicode-bidi:isolate}
+footer .keys{font-size:12px;color:var(--faint);display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+kbd{font-family:var(--mono);font-size:11px;padding:2px 7px;border-radius:6px;border:1px solid var(--line-2);background:var(--glass)}
+@media (max-width:760px){.dots{display:none}.now{display:none}}
+
+@media (max-width:1100px){.ops,.rec,.hist,.tech,.tl-wrap,.trk,.srv,.live,.dm-bottom,.df-grid,.wo-stage{grid-template-columns:minmax(0,1fr)!important}}
+@media (max-width:620px){.node{white-space:normal;text-align:center}.chain .node{max-width:100%}.main{padding:16px}.tw-col,.tw-head{padding-left:16px;padding-right:16px}.arch .node{max-width:100%}}
+@media (max-width:480px){#menuBtn span{display:none}#menuBtn{padding:9px}.brand small{display:none}.eco .row3 .node{width:100%}}
+
+/* ===== per-section radical background themes ===== */
+#p01{background:
+    radial-gradient(1200px 700px at 85% -10%, rgba(241,145,109,.10), transparent 60%),
+    radial-gradient(900px 600px at 5% 20%, rgba(245,215,219,.06), transparent 60%),
+    linear-gradient(180deg, #1B3358 0%, #0F213D 35%, #06142E 100%);
+  }
+#p02{background:
+    radial-gradient(1000px 650px at 85% -5%, rgba(59,130,246,.14), transparent 60%),
+    radial-gradient(850px 550px at 8% 100%, rgba(148,163,184,.12), transparent 55%),
+    linear-gradient(180deg, #0B0F14 0%, #0D1319 40%, #05070A 100%);
+  }
+#p03{background:
+    radial-gradient(1100px 700px at 50% -10%, rgba(45,212,191,.16), transparent 62%),
+    radial-gradient(800px 500px at 90% 100%, rgba(45,212,191,.07), transparent 55%),
+    linear-gradient(180deg, #030504 0%, #010302 45%, #000000 100%);
+  }
+#p04{background:
+    radial-gradient(1100px 650px at 85% -10%, rgba(56,189,248,.16), transparent 60%),
+    radial-gradient(850px 550px at 5% 100%, rgba(59,130,246,.10), transparent 55%),
+    linear-gradient(180deg, #050A16 0%, #071026 45%, #02040A 100%);
+  }
+#p05{background:
+    radial-gradient(1100px 650px at 85% -5%, rgba(167,139,250,.16), transparent 60%),
+    radial-gradient(850px 550px at 5% 100%, rgba(124,58,237,.10), transparent 55%),
+    linear-gradient(180deg, #0C0714 0%, #150A26 45%, #05030A 100%);
+  }
+#p06{background:
+    radial-gradient(1100px 650px at 85% -5%, rgba(251,113,133,.16), transparent 60%),
+    radial-gradient(850px 550px at 5% 100%, rgba(190,24,60,.12), transparent 55%),
+    linear-gradient(180deg, #120508 0%, #1E0810 45%, #060203 100%);
+  }
+#p07{background:
+    radial-gradient(1100px 650px at 85% -5%, rgba(52,211,153,.16), transparent 60%),
+    radial-gradient(850px 550px at 5% 100%, rgba(16,185,129,.10), transparent 55%),
+    linear-gradient(180deg, #03110A 0%, #051A10 45%, #000806 100%);
+  }
+#p08{background:
+    radial-gradient(1100px 650px at 85% -5%, rgba(251,191,36,.16), transparent 60%),
+    radial-gradient(850px 550px at 5% 100%, rgba(180,120,20,.12), transparent 55%),
+    linear-gradient(180deg, #140D04 0%, #201607 45%, #080502 100%);
+  }
+#p09{background:
+    radial-gradient(1100px 650px at 85% -5%, rgba(129,140,248,.16), transparent 60%),
+    radial-gradient(850px 550px at 5% 100%, rgba(79,70,229,.12), transparent 55%),
+    linear-gradient(180deg, #05061A 0%, #0A0E30 45%, #020310 100%);
+  }
+#p10{background:
+    radial-gradient(1100px 650px at 85% -5%, rgba(6,182,212,.16), transparent 60%),
+    radial-gradient(850px 550px at 5% 100%, rgba(8,145,178,.10), transparent 55%),
+    linear-gradient(180deg, #050C0E 0%, #071619 45%, #010506 100%);
+  }
+#p11{background:
+    radial-gradient(1100px 650px at 85% -5%, rgba(148,163,184,.14), transparent 60%),
+    radial-gradient(850px 550px at 5% 100%, rgba(100,116,139,.12), transparent 55%),
+    linear-gradient(180deg, #0A0D10 0%, #10151A 45%, #030405 100%);
+  }
+#p12{background:
+    radial-gradient(1100px 650px at 85% -5%, rgba(244,114,182,.16), transparent 60%),
+    radial-gradient(850px 550px at 5% 100%, rgba(219,39,119,.10), transparent 55%),
+    linear-gradient(180deg, #14040D 0%, #200816 45%, #060206 100%);
+  }
+#p13{background:
+    radial-gradient(1100px 650px at 85% -5%, rgba(194,112,61,.18), transparent 60%),
+    radial-gradient(850px 550px at 5% 100%, rgba(154,82,38,.12), transparent 55%),
+    linear-gradient(180deg, #140D06 0%, #201408 45%, #080401 100%);
+  }
+#p14{background:
+    radial-gradient(1100px 650px at 85% -5%, rgba(239,68,68,.16), transparent 60%),
+    radial-gradient(850px 550px at 5% 100%, rgba(185,28,28,.10), transparent 55%),
+    linear-gradient(180deg, #150405 0%, #220608 45%, #070102 100%);
+  }
+#p15{background:
+    radial-gradient(1100px 650px at 85% -5%, rgba(59,130,246,.16), transparent 60%),
+    radial-gradient(850px 550px at 5% 100%, rgba(37,99,235,.10), transparent 55%),
+    linear-gradient(180deg, #040714 0%, #081026 45%, #010208 100%);
+  }
+#p17{background:
+    radial-gradient(1100px 650px at 85% -5%, rgba(143,163,184,.16), transparent 60%),
+    radial-gradient(850px 550px at 5% 100%, rgba(71,110,140,.14), transparent 55%),
+    linear-gradient(180deg, #0A0D10 0%, #0E161B 45%, #020304 100%);
+  }
+#p18{background:
+    radial-gradient(900px 550px at 50% -5%, rgba(220,38,38,.14), transparent 62%),
+    radial-gradient(700px 450px at 90% 100%, rgba(127,29,29,.10), transparent 55%),
+    linear-gradient(180deg, #040202 0%, #0A0202 50%, #000000 100%);
+  }
+#p19{background:
+    radial-gradient(1100px 650px at 85% -5%, rgba(251,146,60,.18), transparent 60%),
+    radial-gradient(850px 550px at 5% 100%, rgba(234,88,12,.12), transparent 55%),
+    linear-gradient(180deg, #140900 0%, #201000 45%, #080400 100%);
+  }
+#p20{background:
+    radial-gradient(1100px 650px at 50% -10%, rgba(250,204,21,.18), transparent 62%),
+    radial-gradient(850px 550px at 90% 100%, rgba(202,138,4,.12), transparent 55%),
+    linear-gradient(180deg, #140F02 0%, #221A05 45%, #080601 100%);
+  }
+#p21{background:
+    radial-gradient(1200px 700px at 85% -10%, rgba(241,145,109,.10), transparent 60%),
+    radial-gradient(900px 600px at 5% 20%, rgba(245,215,219,.06), transparent 60%),
+    linear-gradient(180deg, #1B3358 0%, #0F213D 35%, #06142E 100%);
+  }
+
+/* ===== live owner-dashboard experience ===== */
+.livepill{display:inline-flex;align-items:center;gap:7px;font-size:11px;font-weight:500;color:var(--ok);background:rgba(98,227,174,.10);border:1px solid rgba(98,227,174,.3);border-radius:999px;padding:4px 10px 4px 8px;margin-inline-start:10px;vertical-align:middle;direction:ltr}
+.livedot{width:7px;height:7px;border-radius:50%;background:var(--ok);display:inline-block;box-shadow:0 0 0 0 rgba(98,227,174,.6);animation:livepulse 1.8s ease-out infinite}
+.livedot.sm{width:6px;height:6px;margin-inline-end:5px}
+@keyframes livepulse{0%{box-shadow:0 0 0 0 rgba(98,227,174,.55)}70%{box-shadow:0 0 0 7px rgba(98,227,174,0)}100%{box-shadow:0 0 0 0 rgba(98,227,174,0)}}
+#lastSync{color:var(--text);font-weight:500}
+#p10 .win .main{position:relative}
+.live-toast{position:absolute;top:14px;left:14px;z-index:5;display:flex;flex-direction:column;gap:8px;pointer-events:none;max-width:min(320px,72%)}
+.live-toast .lt-item{display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:13px;background:rgba(36,63,107,.97);border:1px solid var(--line);box-shadow:0 14px 30px -12px rgba(0,0,0,.7);font-size:12.5px;opacity:0;transform:translateY(-10px);transition:all .4s cubic-bezier(.2,.8,.2,1)}
+.live-toast .lt-item.show{opacity:1;transform:translateY(0)}
+.live-toast .lt-item .ic{color:var(--ok);flex:none}
+.live-toast .lt-item b{font-weight:500}
+
+.live-row{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:14px}
+.chan{display:grid;grid-template-columns:38px 1fr;gap:12px;align-items:center;padding:9px 0}
+.chan-ic{width:38px;height:38px;border-radius:11px;display:grid;place-items:center;background:rgba(6,182,212,.12);color:#06B6D4}
+.chan-ic.a{background:rgba(98,227,174,.12);color:var(--ok)}
+.chan-ic.k{background:rgba(140,203,255,.12);color:var(--info)}
+.chan-top{display:flex;justify-content:space-between;align-items:center;font-size:13px;margin-bottom:6px}
+.chan-top i{font-style:normal;color:var(--faint);font-size:11.5px;margin-inline-start:4px}
+.chan-top b{font-weight:600;font-variant-numeric:tabular-nums;transition:color .3s}
+.chan-bar{height:6px;border-radius:6px;background:rgba(255,255,255,.06);overflow:hidden}
+.chan-bar i{display:block;height:100%;background:#06B6D4;border-radius:6px;transition:width .7s cubic-bezier(.3,.7,.3,1)}
+.chan-note{display:flex;gap:8px;align-items:flex-start;margin-top:10px;font-size:12px;color:var(--faint);line-height:1.6}
+.chan-note .ic{color:var(--yellow);margin-top:2px;flex:none}
+
+.live-mon .livedot{margin-inline-end:4px}
+.live-last{display:flex;align-items:center;gap:9px;margin-top:8px;padding:10px 12px;border-radius:11px;background:rgba(255,255,255,.04);font-size:12.5px;color:var(--muted);min-height:20px}
+.live-last .ic{color:#06B6D4;flex:none}
+.live-last b{color:var(--text);font-weight:500}
+.live-last .src-web{color:#38BDF8}.live-last .src-wa{color:var(--ok)}.live-last .src-walk{color:var(--info)}
+
+.kpi b.bump{animation:kpiflash .8s ease}
+@keyframes kpiflash{0%{transform:scale(1)}30%{transform:scale(1.18);text-shadow:0 0 14px currentColor}100%{transform:scale(1)}}
+.chan-top b.bump{animation:kpiflash .8s ease}
+.legend b.bump{animation:kpiflash .8s ease}
+
+.feed .fi{animation:feedin .5s cubic-bezier(.2,.8,.2,1)}
+@keyframes feedin{0%{opacity:0;transform:translateY(-8px)}100%{opacity:1;transform:translateY(0)}}
+
+@media (max-width:900px){.live-row{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+<defs>
+<symbol id="i-car" viewBox="0 0 24 24"><path d="M5 17H3a1 1 0 0 1-1-1v-3.5l2.2-5.2A2 2 0 0 1 6 6h12a2 2 0 0 1 1.8 1.3L22 12.5V16a1 1 0 0 1-1 1h-2"/><path d="M9 17h6M2.5 12h19"/><circle cx="7" cy="17" r="2"/><circle cx="17" cy="17" r="2"/></symbol>
+<symbol id="i-user" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></symbol>
+<symbol id="i-users" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0"/><path d="M16 4.5a3.5 3.5 0 0 1 0 7M18 14a6.5 6.5 0 0 1 3.5 6"/></symbol>
+<symbol id="i-wrench" viewBox="0 0 24 24"><path d="M14.7 6.3a4 4 0 0 0 5 5L21 10a5.5 5.5 0 0 1-7.3 5.3L7 22l-3-3 6.7-6.7A5.5 5.5 0 0 1 16 5z"/></symbol>
+<symbol id="i-clip" viewBox="0 0 24 24"><rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 3h6v3H9zM9 11h6M9 15h4"/></symbol>
+<symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></symbol>
+<symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/><path d="M9 12l2 2 4-4"/></symbol>
+<symbol id="i-db" viewBox="0 0 24 24"><ellipse cx="12" cy="5" rx="8" ry="3"/><path d="M4 5v14c0 1.7 3.6 3 8 3s8-1.3 8-3V5M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3"/></symbol>
+<symbol id="i-server" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="7" rx="2"/><rect x="3" y="13" width="18" height="7" rx="2"/><path d="M7 7.5h.01M7 16.5h.01M11 7.5h6M11 16.5h6"/></symbol>
+<symbol id="i-globe" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/></symbol>
+<symbol id="i-msg" viewBox="0 0 24 24"><path d="M21 12a8.5 8.5 0 0 1-12.4 7.5L3 21l1.5-5.4A8.5 8.5 0 1 1 21 12z"/><path d="M9 10.5c.5 2 2 3.5 4 4l1.2-1.2 1.8.8"/></symbol>
+<symbol id="i-cam" viewBox="0 0 24 24"><path d="M4 8h3l2-3h6l2 3h3a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1z"/><circle cx="12" cy="13" r="3.5"/></symbol>
+<symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></symbol>
+<symbol id="i-chart" viewBox="0 0 24 24"><path d="M3 20h18M6 16v-5M11 16V6M16 16v-8M20 16v-3"/></symbol>
+<symbol id="i-layers" viewBox="0 0 24 24"><path d="M12 3l9 5-9 5-9-5z"/><path d="M3 13l9 5 9-5"/></symbol>
+<symbol id="i-lock" viewBox="0 0 24 24"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></symbol>
+<symbol id="i-key" viewBox="0 0 24 24"><circle cx="8" cy="15" r="4"/><path d="M11 12l9-9M16 7l3 3"/></symbol>
+<symbol id="i-check" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></symbol>
+<symbol id="i-x" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></symbol>
+<symbol id="i-minus" viewBox="0 0 24 24"><path d="M7 12h10"/></symbol>
+<symbol id="i-bell" viewBox="0 0 24 24"><path d="M6 16v-5a6 6 0 0 1 12 0v5l2 2H4z"/><path d="M10 20.5a2 2 0 0 0 4 0"/></symbol>
+<symbol id="i-eye" viewBox="0 0 24 24"><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></symbol>
+<symbol id="i-box" viewBox="0 0 24 24"><path d="M21 8l-9-5-9 5 9 5z"/><path d="M3 8v8l9 5 9-5V8M12 13v8"/></symbol>
+<symbol id="i-gear" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3.2"/><path d="M12 2.5v3M12 18.5v3M4.6 4.6l2.1 2.1M17.3 17.3l2.1 2.1M2.5 12h3M18.5 12h3M4.6 19.4l2.1-2.1M17.3 6.7l2.1-2.1"/></symbol>
+<symbol id="i-bolt" viewBox="0 0 24 24"><path d="M13 2L4 14h7l-1 8 9-12h-7z"/></symbol>
+<symbol id="i-paint" viewBox="0 0 24 24"><rect x="3" y="3" width="14" height="6" rx="1.5"/><path d="M17 6h3v5h-8v3"/><rect x="10.5" y="14" width="3" height="7" rx="1"/></symbol>
+<symbol id="i-hammer" viewBox="0 0 24 24"><path d="M13 5l3-2 5 5-2 3z"/><path d="M14.5 9.5L4 20l-1-1 10.5-10.5"/></symbol>
+<symbol id="i-flag" viewBox="0 0 24 24"><path d="M5 21V4h12l-2.5 4.5L17 13H5"/></symbol>
+<symbol id="i-truck" viewBox="0 0 24 24"><path d="M2 6h12v10H2zM14 10h4l3 3v3h-7"/><circle cx="6" cy="18" r="2"/><circle cx="17" cy="18" r="2"/></symbol>
+<symbol id="i-file" viewBox="0 0 24 24"><path d="M14 3H6a1 1 0 0 0-1 1v16a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V8z"/><path d="M14 3v5h5M9 13h6M9 17h4"/></symbol>
+<symbol id="i-phone" viewBox="0 0 24 24"><rect x="7" y="2" width="10" height="20" rx="2.5"/><path d="M11 18h2"/></symbol>
+<symbol id="i-tablet" viewBox="0 0 24 24"><rect x="4" y="2" width="16" height="20" rx="2.5"/><path d="M11 18h2"/></symbol>
+<symbol id="i-monitor" viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="13" rx="2"/><path d="M8 21h8M12 17v4"/></symbol>
+<symbol id="i-pin" viewBox="0 0 24 24"><path d="M12 21s7-6 7-12a7 7 0 0 0-14 0c0 6 7 12 7 12z"/><circle cx="12" cy="9" r="2.5"/></symbol>
+<symbol id="i-branch" viewBox="0 0 24 24"><path d="M3 21h18M5 21V8l7-5 7 5v13M9 21v-6h6v6"/></symbol>
+<symbol id="i-alert" viewBox="0 0 24 24"><path d="M12 3.5l9.5 17h-19z"/><path d="M12 10v5M12 18h.01"/></symbol>
+<symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+<symbol id="i-note" viewBox="0 0 24 24"><path d="M4 4h16v11l-5 5H4z"/><path d="M15 20v-5h5M8 9h8M8 13h5"/></symbol>
+<symbol id="i-img" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="10" r="2"/><path d="M21 16l-5-5-9 9"/></symbol>
+<symbol id="i-activity" viewBox="0 0 24 24"><path d="M3 12h4l3-8 4 16 3-8h4"/></symbol>
+<symbol id="i-menu" viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h10"/></symbol>
+<symbol id="i-up" viewBox="0 0 24 24"><path d="M6 15l6-6 6 6"/></symbol>
+<symbol id="i-down" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></symbol>
+<symbol id="i-refresh" viewBox="0 0 24 24"><path d="M20 12a8 8 0 1 1-2.3-5.7L20 8.5M20 3.5v5h-5"/></symbol>
+<symbol id="i-card" viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20M6 15h4"/></symbol>
+<symbol id="i-cart" viewBox="0 0 24 24"><circle cx="9" cy="20" r="1.5"/><circle cx="18" cy="20" r="1.5"/><path d="M2 3h3l2.7 12h11.6L22 7H6"/></symbol>
+<symbol id="i-star" viewBox="0 0 24 24"><path d="M12 3l2.8 5.8 6.2.9-4.5 4.4 1 6.2L12 17.4l-5.5 2.9 1-6.2L3 9.7l6.2-.9z"/></symbol>
+<symbol id="i-plug" viewBox="0 0 24 24"><path d="M9 2v5M15 2v5M6 7h12v4a6 6 0 0 1-12 0zM12 17v5"/></symbol>
+<symbol id="i-cal" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></symbol>
+<symbol id="i-receipt" viewBox="0 0 24 24"><path d="M5 3h14v18l-3-2-2 2-2-2-2 2-2-2-3 2z"/><path d="M9 8h6M9 12h6"/></symbol>
+<symbol id="i-pen" viewBox="0 0 24 24"><path d="M4 20l4-1 11-11-3-3L5 16z"/><path d="M14 7l3 3"/></symbol>
+<symbol id="i-grid" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></symbol>
+<symbol id="i-filter" viewBox="0 0 24 24"><path d="M3 5h18l-7 8v6l-4 2v-8z"/></symbol>
+<symbol id="i-link" viewBox="0 0 24 24"><path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/></symbol>
+<symbol id="i-terminal" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M7 9l3 3-3 3M13 15h4"/></symbol>
+<symbol id="i-archive" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="5" rx="1"/><path d="M5 9v11h14V9M10 13h4"/></symbol>
+<symbol id="i-hash" viewBox="0 0 24 24"><path d="M5 9h15M4 15h15M10 3L8 21M16 3l-2 18"/></symbol>
+<symbol id="i-play" viewBox="0 0 24 24"><path d="M7 4l13 8-13 8z"/></symbol>
+<symbol id="i-route" viewBox="0 0 24 24"><circle cx="6" cy="19" r="2.5"/><circle cx="18" cy="5" r="2.5"/><path d="M8.5 19H16a3.5 3.5 0 0 0 0-7H8a3.5 3.5 0 0 1 0-7h7.5"/></symbol>
+<symbol id="i-inbox" viewBox="0 0 24 24"><path d="M3 13l3-8h12l3 8v6H3z"/><path d="M3 13h5l1 3h6l1-3h5"/></symbol>
+<symbol id="i-scan" viewBox="0 0 24 24"><path d="M4 8V5a1 1 0 0 1 1-1h3M16 4h3a1 1 0 0 1 1 1v3M20 16v3a1 1 0 0 1-1 1h-3M8 20H5a1 1 0 0 1-1-1v-3M7 12h10"/></symbol>
+<symbol id="i-badge" viewBox="0 0 24 24"><circle cx="12" cy="9" r="6"/><path d="M8.5 14L7 22l5-3 5 3-1.5-8"/></symbol>
+<symbol id="i-logs" viewBox="0 0 24 24"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></symbol>
+<symbol id="i-timer" viewBox="0 0 24 24"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2.5 2.5M9 2h6"/></symbol>
+<symbol id="i-home" viewBox="0 0 24 24"><path d="M3 11l9-8 9 8M5 9.5V21h14V9.5"/></symbol>
+<symbol id="i-sparkle" viewBox="0 0 24 24"><path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z"/><path d="M19 17l.8 2.2L22 20l-2.2.8L19 23l-.8-2.2L16 20l2.2-.8z"/></symbol>
+<symbol id="car-side" viewBox="0 0 120 50"><path d="M8 36c-3 0-4-2-4-5v-3c0-3 2-5 5-6l16-3 14-9c3-2 6-3 10-3h26c4 0 7 1 10 4l10 9 12 2c4 1 6 3 6 7v4c0 2-1 3-3 3" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"/><circle cx="30" cy="38" r="8" fill="none" stroke="currentColor" stroke-width="2.2"/><circle cx="92" cy="38" r="8" fill="none" stroke="currentColor" stroke-width="2.2"/><path d="M42 38h40M44 20l6-8M70 11v10" fill="none" stroke="currentColor" stroke-width="2"/></symbol>
+<symbol id="car-front" viewBox="0 0 120 70"><path d="M22 30l8-18c2-4 5-6 10-6h40c5 0 8 2 10 6l8 18M14 30h92c4 0 6 2 6 6v14c0 3-2 5-5 5H13c-3 0-5-2-5-5V36c0-4 2-6 6-6zM16 55v8h14v-8M90 55v8h14v-8" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"/><circle cx="26" cy="42" r="5" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="94" cy="42" r="5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M42 44h36" stroke="currentColor" stroke-width="2"/></symbol>
+</defs>
+</svg>
+
+<div class="progress" id="progress"></div>
+<header class="top">
+  <a class="brand" href="#p01" aria-label="Titanium Digital Workshop">
+    <div class="mark"><span>Ti</span></div>
+    <div><b class="en">TITANIUM</b><small>Digital Workshop</small></div>
+  </a>
+  <div class="now" aria-live="polite"><span class="num" id="nowNum">01</span><span class="ttl" id="nowTtl">نظرة عامة على المشروع</span></div>
+  <div class="nav-btns">
+    <button class="btn-ghost icon" id="prevBtn" aria-label="القسم السابق"><svg class="ic sm"><use href="#i-up"/></svg></button>
+    <button class="btn-ghost icon" id="nextBtn" aria-label="القسم التالي"><svg class="ic sm"><use href="#i-down"/></svg></button>
+    <button class="btn-ghost" id="menuBtn" aria-expanded="false" aria-controls="drawer"><svg class="ic sm"><use href="#i-menu"/></svg><span>أقسام العرض</span></button>
+  </div>
+</header>
+
+<div class="drawer" id="drawer" aria-hidden="true">
+  <div class="scrim" data-close></div>
+  <nav class="panel" aria-label="أقسام العرض">
+    <h3><span>أقسام العرض</span><button class="btn-ghost icon" data-close aria-label="إغلاق"><svg class="ic sm"><use href="#i-x"/></svg></button></h3>
+    <div class="toc" id="toc"></div>
+  </nav>
+</div>
+<nav class="dots" id="dots" aria-label="تنقل سريع"></nav>
+
+<main>
+<!-- ===================== PAGE 01 HERO ===================== -->
+<section class="pg hero" id="p01" data-n="01" data-t="نظرة عامة على المشروع" data-e="Client Presentation" data-c="#F1916D" style="--stage:#F1916D">
+  <div class="wrap">
+    <div class="hero-grid">
+      <div class="rv">
+        <span class="client"><b>PAGE 01</b>عرض تقديمي للعميل والإدارة</span>
+        <div class="wordmark">Titanium<span>DIGITAL WORKSHOP</span></div>
+        <h1>منظومة التحول الرقمي وإدارة الورشة</h1>
+        <p class="lead">منظومة رقمية متكاملة لتحويل دورة العمل داخل الورشة من الإجراءات التقليدية إلى مسار رقمي مركزي يبدأ من تواصل العميل واستقبال السيارة، ويمر بفتح أمر العمل وإسناده للفني ومتابعة مراحل التنفيذ، وينتهي بالفحص النهائي والتسليم ومتابعة الإدارة لجميع العمليات من لوحة مركزية.</p>
+        <div class="hero-meta">
+          <span class="tag"><svg class="ic sm"><use href="#i-globe"/></svg>نظام ويب واحد</span>
+          <span class="tag"><svg class="ic sm"><use href="#i-db"/></svg>قاعدة بيانات مركزية</span>
+          <span class="tag"><svg class="ic sm"><use href="#i-users"/></svg>واجهة لكل دور</span>
+          <span class="tag"><svg class="ic sm"><use href="#i-monitor"/></svg>جوال · <span class="en">iPad</span> · كمبيوتر</span>
+        </div>
+        <div class="hero-actions">
+          <a class="btn pri" href="#p03"><svg class="ic sm"><use href="#i-layers"/></svg>المنظومة التشغيلية</a>
+          <a class="btn" href="#p09"><svg class="ic sm"><use href="#i-route"/></svg>رحلة السيارة الكاملة</a>
+          <a class="btn" href="#p10"><svg class="ic sm"><use href="#i-chart"/></svg><span class="en">Owner Dashboard</span></a>
+        </div>
+      </div>
+      <div class="glass rail rv">
+        <h4><span>المكونات الرئيسية بالترتيب</span><span class="sample">8 COMPONENTS</span></h4>
+        <ol>
+          <li><div class="b"><svg class="ic"><use href="#i-globe"/></svg></div><div><strong>Website</strong><span>التعريف بالورشة وطلب الخدمة</span></div><em>01</em></li>
+          <li><div class="b"><svg class="ic"><use href="#i-msg"/></svg></div><div><strong>WhatsApp Business</strong><span>تنظيم التواصل مع العملاء</span></div><em>02</em></li>
+          <li><div class="b"><svg class="ic"><use href="#i-inbox"/></svg></div><div><strong>Digital Reception</strong><span>تسجيل العميل والسيارة</span></div><em>03</em></li>
+          <li class="core"><div class="b"><svg class="ic"><use href="#i-clip"/></svg></div><div><strong>Work Order</strong><span>أمر العمل — قلب المنظومة</span></div><em>04</em></li>
+          <li><div class="b"><svg class="ic"><use href="#i-wrench"/></svg></div><div><strong>Technician Page</strong><span>مهام الفني وتحديث العمل</span></div><em>05</em></li>
+          <li><div class="b"><svg class="ic"><use href="#i-clock"/></svg></div><div><strong>TIMELINE</strong><span>مراحل العمل</span></div><em>06</em></li>
+          <li><div class="b"><svg class="ic"><use href="#i-phone"/></svg></div><div><strong>Customer Tracking</strong><span>رابط متابعة آمن للعميل</span></div><em>07</em></li>
+          <li><div class="b"><svg class="ic"><use href="#i-chart"/></svg></div><div><strong>Owner Dashboard</strong><span>الرؤية الكاملة للإدارة</span></div><em>08</em></li>
+        </ol>
+      </div>
+    </div>
+
+    <div class="future glass pad rv">
+      <div class="future-in">
+        <div>
+          <h3>مبني ليتوسع مع الورشة</h3>
+          <p>البنية نفسها تستوعب وحدات جديدة مستقبلًا دون إعادة بناء النظام.</p>
+        </div>
+        <div class="chips">
+          <span class="chip"><svg class="ic"><use href="#i-box"/></svg>المخزون</span>
+          <span class="chip"><svg class="ic"><use href="#i-gear"/></svg>قطع الغيار</span>
+          <span class="chip"><svg class="ic"><use href="#i-pen"/></svg>الموافقات الإلكترونية</span>
+          <span class="chip"><svg class="ic"><use href="#i-card"/></svg>المدفوعات</span>
+          <span class="chip"><svg class="ic"><use href="#i-receipt"/></svg>المحاسبة</span>
+          <span class="chip"><svg class="ic"><use href="#i-chart"/></svg>التقارير المالية</span>
+          <span class="chip"><svg class="ic"><use href="#i-cart"/></svg>المتجر الإلكتروني</span>
+          <span class="chip"><svg class="ic"><use href="#i-star"/></svg>برامج الولاء</span>
+          <span class="chip"><svg class="ic"><use href="#i-cal"/></svg>التذكير بالصيانة</span>
+          <span class="chip"><svg class="ic"><use href="#i-plug"/></svg>التكاملات الخارجية</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== PAGE 02 PHASES ===================== -->
+<section class="pg" id="p02" data-n="02" data-t="مراحل تنفيذ المشروع" data-e="Project Phases" data-c="#C9A227" style="--stage:#C9A227">
+  <div class="wrap">
+    <div class="head rv"><span class="pn">PAGE 02</span><div><div class="kicker">PROJECT PHASES</div><h2>مراحل تنفيذ المشروع</h2><p>ست مراحل متتابعة؛ كل مرحلة تضيف طبقة تشغيلية جديدة فوق ما قبلها، وتبدأ الورشة بالاستفادة منها فور إطلاقها.</p></div></div>
+    <div class="phases rv">
+      <div class="ph" style="--pc:#38BDF8"><div class="dot"><b>1</b></div><div class="glass card">
+        <h3>الموقع الإلكتروني و <span class="en">WhatsApp Business</span></h3><div class="en-t">Website + WhatsApp Business</div>
+        <ul><li>تعريف الورشة</li><li>الخدمات</li><li>الفروع</li><li>الخرائط</li><li>التواصل</li><li>طلب الخدمة</li><li>روابط <span class="en">WhatsApp</span></li><li>الملف التجاري</li><li>الردود السريعة</li><li>تنظيم التواصل مع العملاء</li></ul></div></div>
+      <div class="ph" style="--pc:#22D3EE"><div class="dot"><b>2</b></div><div class="glass card">
+        <h3>جمع وتسجيل بيانات العملاء</h3><div class="en-t">Client Data Collection &amp; Entry</div>
+        <ul><li>جمع سجلات العملاء الحاليين</li><li>بيانات السيارات المسجلة لديهم</li><li>قوائم قطع الغيار والأسعار</li><li>بيانات الفنيين والأقسام</li><li>مراجعة وتدقيق البيانات</li><li>تنظيف التكرار والأخطاء</li><li>تسجيل البيانات كاملة في قاعدة النظام</li><li>أرشفة رقمية بدل الأوراق</li></ul></div></div>
+      <div class="ph" style="--pc:#34D399"><div class="dot"><b>3</b></div><div class="glass card">
+        <h3>الاستقبال الرقمي</h3><div class="en-t">Digital Vehicle Reception</div>
+        <ul><li>بيانات العميل ورقم الجوال</li><li>بيانات السيارة واللوحة</li><li>الشركة المصنعة، الموديل، السنة</li><li>العداد</li><li>سبب الزيارة والخدمة المطلوبة</li><li>الفرع</li><li>صور السيارة عند الاستلام</li><li>الملاحظات</li><li>وقت وتاريخ الاستلام</li><li>موظف الاستقبال</li></ul></div></div>
+      <div class="ph" style="--pc:#FBBF24"><div class="dot"><b>4</b></div><div class="glass card">
+        <h3>تشغيل الورشة</h3><div class="en-t">Workshop Operations</div>
+        <ul><li>إنشاء <span class="en">Work Order</span></li><li>إسناد السيارة للفني</li><li>الفحص والتشخيص</li><li>الصور والملاحظات</li><li>الأعمال المطلوبة</li><li>تحديث الحالة</li><li>متابعة الفنيين</li><li>متابعة السيارات داخل الورشة</li></ul></div></div>
+      <div class="ph" style="--pc:#A78BFA"><div class="dot"><b>5</b></div><div class="glass card">
+        <h3>مراحل العمل ومتابعة العميل</h3><div class="en-t">TIMELINE & Customer Tracking</div>
+        <ul><li>تم الاستلام</li><li>تم إسناد الفني</li><li>تم الفحص</li><li>بانتظار الموافقة</li><li>تمت الموافقة</li><li>بدأ العمل</li><li>اكتمل الإصلاح</li><li>الفحص النهائي</li><li>جاهزة للتسليم</li><li>تم التسليم</li></ul></div></div>
+      <div class="ph" style="--pc:#F1916D"><div class="dot"><b>6</b></div><div class="glass card">
+        <h3>لوحة المالك</h3><div class="en-t">Owner Dashboard</div>
+        <ul><li>جميع السيارات وحالاتها</li><li>الفنيين</li><li>الأقسام</li><li>الفروع</li><li>الأداء</li><li>متوسط الإنجاز</li><li>الأعمال المتأخرة</li><li>التقارير التشغيلية</li></ul></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== PAGE 03 OPS ===================== -->
+<section class="pg" id="p03" data-n="03" data-t="المنظومة التشغيلية" data-e="Workshop Operational System" data-c="#2DD4BF" style="--stage:#2DD4BF">
+  <div class="wrap">
+    <div class="head rv"><span class="pn">PAGE 03</span><div><div class="kicker">WORKSHOP OPERATIONAL SYSTEM</div><h2>ليست مجموعة برامج منفصلة، بل نظام ويب مركزي واحد</h2><p>الاستقبال والفني والمشرف والمالك يستخدمون واجهات مختلفة من نفس النظام، وكلها تقرأ وتكتب في مصدر بيانات واحد.</p></div></div>
+    <div class="ops">
+      <div class="glass arch rv">
+        <span class="node core" style="font-size:16px;padding:16px 26px"><svg class="ic lg"><use href="#i-layers"/></svg><span class="en">TITANIUM DIGITAL WORKSHOP</span></span>
+        <div class="vline flow"></div>
+        <span class="node"><svg class="ic"><use href="#i-server"/></svg><span><span class="en">Titanium Backend API</span><small>منطق العمل والصلاحيات</small></span></span>
+        <div class="vline flow"></div>
+        <span class="node db"><svg class="ic"><use href="#i-db"/></svg><span><span class="en">PostgreSQL</span><small>مصدر الحقيقة الوحيد</small></span></span>
+        <div class="row3">
+          <span class="node"><svg class="ic"><use href="#i-inbox"/></svg><span class="en">Reception</span></span>
+          <span class="node"><svg class="ic"><use href="#i-wrench"/></svg><span class="en">Technician</span></span>
+          <span class="node"><svg class="ic"><use href="#i-chart"/></svg><span class="en">Owner Dashboard</span></span>
+        </div>
+        <div class="merge"></div><div class="sp"></div>
+        <span class="node" style="border-color:rgba(98,227,174,.45)"><svg class="ic" style="color:var(--ok)"><use href="#i-phone"/></svg><span><span class="en">Customer Tracking</span><small>تتحدث تلقائيًا من نفس البيانات</small></span></span>
+      </div>
+      <div class="rv">
+        <div class="pillars">
+          <div class="pillar"><div class="b"><svg class="ic"><use href="#i-server"/></svg></div><div><strong><span class="en">Backend API</span> واحد</strong><span>كل الواجهات تمر عبر نفس البوابة</span></div></div>
+          <div class="pillar"><div class="b"><svg class="ic"><use href="#i-db"/></svg></div><div><strong><span class="en">PostgreSQL</span> واحدة</strong><span>لا نسخ متفرقة من البيانات</span></div></div>
+          <div class="pillar"><div class="b"><svg class="ic"><use href="#i-key"/></svg></div><div><strong><span class="en">Authentication</span> مركزي</strong><span>حساب واحد لكل موظف في كل الواجهات</span></div></div>
+          <div class="pillar"><div class="b"><svg class="ic"><use href="#i-shield"/></svg></div><div><strong><span class="en">Role-Based Access Control</span></strong><span>كل مستخدم يرى ما يخص دوره فقط</span></div></div>
+        </div>
+        <div class="once">
+          <p>لا يوجد إدخال مكرر للبيانات. المعلومة تدخل مرة واحدة، ثم تظهر تلقائيًا لكل مستخدم حسب صلاحياته.</p>
+          <small>مثال: اللوحة التي يكتبها موظف الاستقبال هي نفسها التي يراها الفني والمالك والعميل.</small>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<!-- ===================== PAGE 04 RECEPTION ===================== -->
+<section class="pg" id="p04" data-n="04" data-t="استقبال العميل والسيارة" data-e="Digital Reception" data-c="#38BDF8" style="--stage:#38BDF8">
+  <div class="wrap">
+    <div class="head rv"><span class="pn">PAGE 04</span><div><div class="kicker">DIGITAL RECEPTION</div><h2>استقبال العميل والسيارة</h2><p>يبدأ موظف الاستقبال بالبحث برقم الجوال أو رقم اللوحة. إذا كان العميل مسجلًا يُفتح ملفه مباشرة، وإذا كان جديدًا يُنشأ ملفه مرة واحدة فقط.</p></div></div>
+    <div class="rec">
+      <div class="win rv">
+        <div class="win-bar"><div class="lights"><i></i><i></i><i></i></div><div class="url"><svg class="ic"><use href="#i-lock"/></svg>app.titanium.sa/reception</div><span class="sample">Sample Data</span></div>
+        <div class="app">
+          <aside class="side">
+            <div class="me"><div class="av">خ</div><div><b>خالد</b><small>موظف الاستقبال</small></div></div>
+            <a class="on" href="#p04"><svg class="ic sm"><use href="#i-inbox"/></svg>استقبال جديد</a>
+            <a href="#p05"><svg class="ic sm"><use href="#i-users"/></svg>العملاء</a>
+            <a href="#p05"><svg class="ic sm"><use href="#i-car"/></svg>السيارات</a>
+            <a href="#p06"><svg class="ic sm"><use href="#i-clip"/></svg><span class="en">Work Orders</span></a>
+            <a href="#p09"><svg class="ic sm"><use href="#i-truck"/></svg>التسليم</a>
+          </aside>
+          <div class="main">
+            <div class="srch">
+              <div class="field-s"><svg class="ic"><use href="#i-search"/></svg><span class="en">05XXXXXXXX</span></div>
+              <div class="seg"><span class="on">رقم الجوال</span><span class="en">OR</span><span>رقم اللوحة</span></div>
+            </div>
+            <div class="found"><svg class="ic"><use href="#i-check"/></svg><span>عميل موجود: <b>محمد أحمد</b> — سيارة واحدة، 2 زيارات سابقة</span><span class="st ok" style="margin-inline-start:auto">فتح الملف</span></div>
+            <div class="fgrid">
+              <div class="fld"><label>العميل</label><div>محمد أحمد</div></div>
+              <div class="fld"><label>الجوال</label><div class="en">05XXXXXXXX</div></div>
+              <div class="fld"><label>السيارة</label><div class="en">Toyota Camry</div></div>
+              <div class="fld"><label>الموديل</label><div class="en">2023</div></div>
+              <div class="fld"><label>اللوحة</label><div><span class="plate"><i>1234</i><i>أ ب ج</i></span></div></div>
+              <div class="fld"><label>العداد</label><div class="en">42,150 KM</div></div>
+              <div class="fld"><label>الخدمة</label><div>سمكرة</div></div>
+              <div class="fld wide"><label>سبب الزيارة</label><div>إصلاح صدام أمامي</div></div>
+              <div class="fld"><label>الفرع</label><div>الفرع الرئيسي</div></div>
+              <div class="fld"><label>موظف الاستقبال</label><div>خالد</div></div>
+              <div class="fld"><label>وقت الاستلام</label><div class="en">09:15 AM</div></div>
+            </div>
+            <div class="subh"><span>صور السيارة عند الاستلام</span><span class="tag"><svg class="ic sm"><use href="#i-cam"/></svg>4 / 4</span></div>
+            <div class="photos">
+              <div class="shot"><span class="flag">ضرر</span><svg class="car" viewBox="0 0 120 70"><use href="#car-front"/></svg>أمامي</div>
+              <div class="shot"><svg class="car" viewBox="0 0 120 50"><use href="#car-side"/></svg>جانب أيمن</div>
+              <div class="shot"><svg class="car" viewBox="0 0 120 50" style="transform:scaleX(-1)"><use href="#car-side"/></svg>جانب أيسر</div>
+              <div class="shot"><svg class="car" viewBox="0 0 120 70"><use href="#car-front"/></svg>خلفي</div>
+            </div>
+            <div class="cond">
+              <div class="box"><b>حالة السيارة الخارجية</b>خدش وانبعاج في الصدام الأمامي — الجهة اليمنى. لا توجد أضرار أخرى ظاهرة.</div>
+              <div class="box"><b>ملاحظات الاستلام</b>العميل يطلب الاحتفاظ بالقطعة القديمة. مستوى الوقود: نصف خزان.</div>
+            </div>
+            <div class="acts">
+              <span class="faint" style="font-size:12.5px">سيُسجل الاستلام باسم خالد تلقائيًا</span>
+              <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn" data-toast="تم حفظ المسودة">حفظ كمسودة</button><button class="btn pri" data-toast="تم إنشاء WO-2026-00125"><svg class="ic sm"><use href="#i-plus"/></svg>إنشاء <span class="en">Work Order</span></button></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="glass decide rv">
+        <h4>منطق الاستقبال</h4>
+        <div class="dflow">
+          <span class="node"><svg class="ic"><use href="#i-search"/></svg>بحث بالجوال أو اللوحة</span>
+          <div class="vline"></div>
+          <div class="fork">
+            <div class="col yes"><span class="lbl">عميل موجود</span><div class="mini">فتح الملف</div><div class="vs"></div><div class="mini">اختيار السيارة</div><div class="vs"></div><div class="mini">Create Visit</div></div>
+            <div class="col no"><span class="lbl">عميل جديد</span><div class="mini">Create Customer</div><div class="vs"></div><div class="mini">Create Vehicle</div><div class="vs"></div><div class="mini">Create Visit</div></div>
+          </div>
+          <div class="vline"></div>
+          <div class="mini hi" style="font-weight:500">Create Work Order</div>
+          <p class="faint" style="font-size:12.5px;margin-top:16px;text-align:center">في الحالتين ينتهي المسار بأمر عمل جديد مرتبط بالسيارة وبالعميل.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== PAGE 05 HISTORY ===================== -->
+<section class="pg" id="p05" data-n="05" data-t="ملف العميل والسيارة" data-e="Customer & Vehicle History" data-c="#A78BFA" style="--stage:#A78BFA">
+  <div class="wrap">
+    <div class="head rv"><span class="pn">PAGE 05</span><div><div class="kicker">CUSTOMER & VEHICLE HISTORY</div><h2>ملف العميل والسيارة</h2><p>العميل يملك سيارة أو أكثر، ولكل سيارة سجل زيارات كامل. عند عودة السيارة لا يُعاد تسجيلها من الصفر؛ تُضاف زيارة جديدة إلى سجلها.</p></div></div>
+    <div class="hist">
+      <div class="glass tree rv">
+        <div class="t-title">العلاقة العامة</div>
+        <ul><li><span class="tn c"><svg class="ic sm"><use href="#i-user"/></svg><span class="en">Customer</span></span>
+          <ul>
+            <li><span class="tn v"><svg class="ic sm"><use href="#i-car"/></svg><span class="en">Vehicle 01</span></span>
+              <ul><li><span class="tn w">Visit 01</span></li><li><span class="tn w">Visit 02</span></li><li><span class="tn w">Visit 03</span></li></ul></li>
+            <li><span class="tn v"><svg class="ic sm"><use href="#i-car"/></svg><span class="en">Vehicle 02</span></span>
+              <ul><li><span class="tn w">Visit 01</span></li><li><span class="tn w">Visit 02</span></li></ul></li>
+          </ul></li></ul>
+        <div class="t-title" style="margin-top:26px">مثال فعلي</div>
+        <ul><li><span class="tn c"><svg class="ic sm"><use href="#i-user"/></svg>محمد أحمد</span>
+          <ul><li><span class="tn v"><svg class="ic sm"><use href="#i-car"/></svg><span class="en">Toyota Camry 2023</span></span>
+            <ul><li><span class="tn w">WO-2026-00031</span></li><li><span class="tn w">WO-2026-00078</span></li><li><span class="tn w latest">WO-2026-00125</span></li></ul></li></ul></li></ul>
+      </div>
+      <div class="rv">
+        <div class="glass vh">
+          <div class="vh-top"><div><h4 class="en">Toyota Camry 2023</h4><p>محمد أحمد · <span class="plate" style="font-size:11px"><i>1234</i><i>أ ب ج</i></span></p></div><span class="sample">Sample Data</span></div>
+          <div class="vstats"><div><b>3</b><span>زيارات</span></div><div><b>42,150</b><span>العداد الحالي <span class="en">KM</span></span></div><div><b>18,400</b><span>العداد عند أول زيارة</span></div></div>
+          <div class="visits">
+            <div class="visit"><span class="wo">WO-2026-00125</span><div class="d">سمكرة — إصلاح صدام أمامي<small>الفني: أحمد · دخول 09:15 · العداد 42,150</small></div><span class="st work">جاري العمل</span></div>
+            <div class="visit"><span class="wo">WO-2026-00078</span><div class="d">ميكانيكا — صيانة دورية وتغيير فرامل<small>الفني: محمد · 6 صور · 3 ملاحظات · العداد 31,020</small></div><span class="st ok">تم التسليم</span></div>
+            <div class="visit"><span class="wo">WO-2026-00031</span><div class="d">كهرباء — فحص بطارية ونظام شحن<small>الفني: سعد · 2 صور · العداد 18,400</small></div><span class="st ok">تم التسليم</span></div>
+          </div>
+        </div>
+        <div class="keeps">
+          <span class="tag">الزيارات السابقة</span><span class="tag"><span class="en">Work Orders</span></span><span class="tag">العداد السابق</span><span class="tag">الخدمات السابقة</span><span class="tag">الصور</span><span class="tag">الملاحظات</span><span class="tag">الفني</span><span class="tag">مراحل العمل</span><span class="tag">تاريخ الدخول</span><span class="tag">تاريخ التسليم</span>
+        </div>
+        <div class="callout"><svg class="ic"><use href="#i-refresh"/></svg><div>عند عودة السيارة، يكفي البحث برقم اللوحة ليظهر تاريخها كاملًا، وتُفتح زيارة جديدة خلال ثوانٍ.</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== PAGE 06 WORK ORDER ===================== -->
+<section class="pg" id="p06" data-n="06" data-t="Work Order / Job Card" data-e="Work Order / Job Card" data-c="#FB7185" style="--stage:#FB7185">
+  <div class="wrap">
+    <div class="head rv"><span class="pn">PAGE 06</span><div><div class="kicker">WORK ORDER / JOB CARD</div><h2>أمر العمل: البطاقة التي تجمع كل شيء</h2><p>كل زيارة تتحول إلى <span class="en">Work Order</span> برقم فريد. هذه البطاقة هي نقطة الالتقاء بين الاستقبال والفني والمشرف والمالك.</p></div></div>
+    <div class="wo-stage">
+      <div class="anno rv">
+        <div><b>رقم فريد وتسلسلي</b>يبدأ بالسنة ليسهل البحث والأرشفة.</div>
+        <div><b>مرتبط بالعميل والسيارة</b>فتح الملف يعرض السجل الكامل للسيارة.</div>
+      </div>
+      <article class="glass jc rv">
+        <div class="jc-top">
+          <div class="row"><div><small>Work Order</small><div class="jc-no">WO-2026-00125</div></div><span class="st wait">بانتظار الفحص</span></div>
+          <div class="jc-car"><div class="ico"><svg class="ic lg"><use href="#i-car"/></svg></div><div><h4>Toyota Camry 2023</h4><span class="plate"><i>1234</i><i>أ ب ج</i></span></div></div>
+        </div>
+        <div class="jc-body">
+          <div><label>Customer</label><span>محمد أحمد</span></div>
+          <div><label>Service</label><span>سمكرة</span></div>
+          <div><label>Branch</label><span>الفرع الرئيسي</span></div>
+          <div><label>Assigned Technician</label><span>أحمد</span></div>
+          <div><label>Received</label><span class="en">09:15 AM</span></div>
+          <div><label>Visit Reason</label><span>إصلاح صدام أمامي</span></div>
+        </div>
+        <div class="jc-prog"><div class="bar"><i style="width:22%"></i></div><div class="lbls"><span>تم الإسناد</span><span>2 من 9 مراحل</span></div></div>
+        <div class="jc-acts">
+          <button class="btn" data-toast="فتح ملف محمد أحمد"><svg class="ic sm"><use href="#i-file"/></svg>فتح الملف</button>
+          <button class="btn" data-toast="4 صور استلام"><svg class="ic sm"><use href="#i-img"/></svg>عرض الصور</button>
+          <button class="btn" data-toast="تم إسناد الفني: أحمد"><svg class="ic sm"><use href="#i-user"/></svg>إسناد فني</button>
+          <button class="btn pri" data-toast="تم تحديث الحالة"><svg class="ic sm"><use href="#i-refresh"/></svg>تحديث الحالة</button>
+          <button class="btn soft" data-toast="تمت إضافة الملاحظة"><svg class="ic sm"><use href="#i-note"/></svg>إضافة ملاحظة</button>
+        </div>
+      </article>
+      <div class="anno rv">
+        <div><b>حالة واحدة واضحة</b>تتغير من صفحة الفني وتنعكس فورًا في كل الواجهات.</div>
+        <div><b>كل إجراء مسجل</b>الإسناد والتحديث والملاحظة تُحفظ باسم من قام بها ووقتها.</div>
+      </div>
+    </div>
+  </div>
+</section>
+<!-- ===================== PAGE 07 TECHNICIAN ===================== -->
+<section class="pg" id="p07" data-n="07" data-t="صفحة الفني" data-e="Technician Page" data-c="#34D399" style="--stage:#34D399">
+  <div class="wrap">
+    <div class="head rv"><span class="pn">PAGE 07</span><div><div class="kicker">TECHNICIAN PAGE</div><h2>صفحة الفني: صفحة ويب داخل Titanium، وليست تطبيقًا مستقلًا</h2><p>كل فني يسجل الدخول بحسابه من أي جهاز، ويرى فقط الأعمال المسندة إليه أو المسموح له بها.</p></div></div>
+    <div class="devs rv"><span class="urlbig">app.titanium.sa/technician</span><span class="tag"><svg class="ic sm"><use href="#i-phone"/></svg><span class="en">Mobile</span></span><span class="tag"><svg class="ic sm"><use href="#i-tablet"/></svg><span class="en">iPad</span></span><span class="tag"><svg class="ic sm"><use href="#i-monitor"/></svg><span class="en">Desktop</span></span></div>
+    <div class="tech">
+      <div class="phone rv"><div class="scr"><div class="notch"></div>
+        <div class="sbar"><span>9:41</span><span>5G ▮▮▮</span></div>
+        <div class="tasks">
+          <div class="hi">صباح الخير، أحمد</div>
+          <h5>مهامي اليوم</h5>
+          <div class="tsum"><div><b>3</b><span>مسندة</span></div><div><b style="color:var(--orange)">1</b><span>جاري</span></div><div><b style="color:var(--ok)">2</b><span>منجزة</span></div></div>
+          <div class="task act"><div class="wo">WO-2026-00125</div><div class="car">Toyota Camry</div><div class="ft"><span class="st wait">بانتظار الفحص</span><span>سمكرة</span></div></div>
+          <div class="task"><div class="wo">WO-2026-00131</div><div class="car">Nissan Patrol</div><div class="ft"><span class="st work">جاري العمل</span><span>كهرباء</span></div></div>
+          <div class="task"><div class="wo">WO-2026-00138</div><div class="car">Toyota Land Cruiser</div><div class="ft"><span class="st info">الفحص النهائي</span><span>ميكانيكا</span></div></div>
+        </div>
+        <div class="tabbar"><span class="on"><svg class="ic sm"><use href="#i-clip"/></svg>مهامي</span><span><svg class="ic sm"><use href="#i-scan"/></svg>بحث</span><span><svg class="ic sm"><use href="#i-bell"/></svg>تنبيهات</span><span><svg class="ic sm"><use href="#i-user"/></svg>حسابي</span></div>
+      </div></div>
+      <div class="rv">
+        <div class="win twin">
+          <div class="win-bar"><div class="lights"><i></i><i></i><i></i></div><div class="url"><svg class="ic"><use href="#i-lock"/></svg>app.titanium.sa/technician/wo/00125</div><span class="sample">Sample Data</span></div>
+          <div class="main">
+            <div class="tw-head"><div><small>WO-2026-00125</small><h4>Toyota Camry 2023</h4></div><div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn" data-toast="تم رفع الصور"><svg class="ic sm"><use href="#i-cam"/></svg>رفع صور</button><button class="btn pri" data-toast="بدأ العمل على WO-2026-00125"><svg class="ic sm"><use href="#i-play"/></svg>بدء العمل</button></div></div>
+            <div class="tw-grid">
+              <div class="tw-col">
+                <h6>الفحص والتشخيص</h6>
+                <div class="chk on"><span class="bx"><svg class="ic sm"><use href="#i-check"/></svg></span>مراجعة صور الاستلام<span class="note">4 صور</span></div>
+                <div class="chk on"><span class="bx"><svg class="ic sm"><use href="#i-check"/></svg></span>فحص الصدام الأمامي والدعامات</div>
+                <div class="chk on"><span class="bx"><svg class="ic sm"><use href="#i-check"/></svg></span>فحص حساسات الركن الأمامية</div>
+                <div class="chk"><span class="bx"></span>تحديد الأعمال المطلوبة<span class="note">مطلوب</span></div>
+                <div class="diag"><b style="color:var(--text);font-weight:500">التشخيص:</b> انبعاج في الصدام مع كسر في الدعامة اليمنى. يلزم إصلاح الصدام، تبديل الدعامة، ثم دهان جزئي.</div>
+              </div>
+              <div class="tw-col">
+                <h6>تحديث المرحلة</h6>
+                <div class="stepper">
+                  <div class="stp done"><svg class="ic sm"><use href="#i-check"/></svg>تم الاستلام</div>
+                  <div class="stp done"><svg class="ic sm"><use href="#i-check"/></svg>تم إسناد الفني</div>
+                  <div class="stp cur"><svg class="ic sm" style="color:var(--orange)"><use href="#i-scan"/></svg>الفحص والتشخيص</div>
+                  <div class="stp next"><svg class="ic sm"><use href="#i-clock"/></svg>بانتظار الموافقة</div>
+                  <div class="stp next"><svg class="ic sm"><use href="#i-wrench"/></svg>بدء العمل</div>
+                  <div class="stp next"><svg class="ic sm"><use href="#i-flag"/></svg>إرسال للفحص النهائي</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="tech-caps">
+          <span class="tag">فتح بيانات السيارة</span><span class="tag">مشاهدة الصور</span><span class="tag">إجراء الفحص</span><span class="tag">إدخال التشخيص</span><span class="tag">كتابة الملاحظات</span><span class="tag">تحديد الأعمال المطلوبة</span><span class="tag">رفع صور</span><span class="tag">بدء العمل</span><span class="tag">تحديث المرحلة</span><span class="tag">إنهاء العمل</span><span class="tag">إرسالها للفحص النهائي</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== PAGE 08 TIMELINE ===================== -->
+<section class="pg" id="p08" data-n="08" data-t="مراحل العمل TIMELINE" data-e="TIMELINE" data-c="#FBBF24" style="--stage:#FBBF24">
+  <div class="wrap">
+    <div class="head rv"><span class="pn">PAGE 08</span><div><div class="kicker">TIMELINE</div><h2>مراحل العمل</h2><p>النظام لا يحتفظ بالحالة الحالية فقط، بل بكل حدث مرّت به السيارة: من غيّر الحالة، ومتى، وكم استغرقت كل مرحلة.</p></div></div>
+    <div class="tl-wrap">
+      <div class="glass tl rv">
+        <div class="tl-head"><div><b style="font-weight:500">WO-2026-00125</b> <span class="faint en" style="font-size:13px">Toyota Camry 2023</span></div><span class="sample">Sample Data</span></div>
+        <div class="ev"><span class="tm">09:15</span><span class="ax"><i></i></span><div class="bd"><b>تم استلام السيارة</b><span>موظف الاستقبال: خالد · 4 صور</span></div><span class="dur">+7m</span></div>
+        <div class="ev"><span class="tm">09:22</span><span class="ax"><i></i></span><div class="bd"><b>تم إسناد السيارة</b><span>الفني: أحمد</span></div><span class="dur">+1h 20m</span></div>
+        <div class="ev"><span class="tm">10:42</span><span class="ax"><i></i></span><div class="bd"><b>تم الانتهاء من الفحص</b><span>الفني: أحمد · تشخيص + 3 صور</span></div><span class="dur">+23m</span></div>
+        <div class="ev"><span class="tm">11:05</span><span class="ax"><i></i></span><div class="bd"><b>تم اعتماد العمل</b><span>بموافقة العميل</span></div><span class="dur">+15m</span></div>
+        <div class="ev"><span class="tm">11:20</span><span class="ax"><i></i></span><div class="bd"><b>بدأ العمل</b><span>الفني: أحمد</span></div><span class="dur">+3h 15m</span></div>
+        <div class="ev"><span class="tm">14:35</span><span class="ax"><i></i></span><div class="bd"><b>تم الانتهاء من الإصلاح</b><span>الفني: أحمد · صور بعد الإصلاح</span></div><span class="dur">+25m</span></div>
+        <div class="ev"><span class="tm">15:00</span><span class="ax"><i></i></span><div class="bd"><b>الفحص النهائي</b><span>الجودة</span></div><span class="dur">+15m</span></div>
+        <div class="ev fin"><span class="tm">15:15</span><span class="ax"><i></i></span><div class="bd"><b>السيارة جاهزة للتسليم</b><span>تم إشعار العميل</span></div></div>
+        <div class="ev pend"><span class="tm">—</span><span class="ax"><i></i></span><div class="bd"><b>تم التسليم</b><span>بانتظار حضور العميل</span></div></div>
+      </div>
+      <div class="model rv">
+        <div class="eq"><div class="box"><b>Current Status</b><span>الحالة الآن</span></div><span class="plus">+</span><div class="box"><b>Status History</b><span>كل ما سبقها</span></div></div>
+        <div class="glass anat">
+          <h5>ماذا يحفظ كل <span class="en">Event</span>؟</h5>
+<pre>{
+  <span class="k">"status"</span>:      <span class="s">"repair_completed"</span>,
+  <span class="k">"date"</span>:        <span class="s">"2026-09-18"</span>,
+  <span class="k">"time"</span>:        <span class="s">"14:35"</span>,
+  <span class="k">"user"</span>:        <span class="s">"Ahmed (Technician)"</span>,
+  <span class="k">"notes"</span>:       <span class="s">"Bumper + bracket replaced"</span>,
+  <span class="k">"attachments"</span>: [<span class="p">3 photos</span>]
+}</pre>
+        </div>
+        <div class="qs">
+          <div><svg class="ic"><use href="#i-user"/></svg>من غيّر الحالة؟</div>
+          <div><svg class="ic"><use href="#i-clock"/></svg>متى؟</div>
+          <div><svg class="ic"><use href="#i-wrench"/></svg>من كان الفني؟</div>
+          <div><svg class="ic"><use href="#i-timer"/></svg>كم استغرقت المرحلة؟</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== PAGE 09 JOURNEY ===================== -->
+<section class="pg" id="p09" data-n="09" data-t="رحلة السيارة الكاملة" data-e="Complete Vehicle Journey" data-c="#818CF8" style="--stage:#818CF8">
+  <div class="wrap">
+    <div class="head rv"><span class="pn">PAGE 09</span><div><div class="kicker">COMPLETE VEHICLE JOURNEY</div><h2>رحلة السيارة الكاملة</h2><p>سبعة عشر خطوة من وصول العميل حتى حفظ الزيارة في سجل السيارة، كل خطوة منها مسجلة في النظام.</p></div></div>
+    <div class="glass journey rv">
+      <div class="jr">
+        <div class="js-step"><span class="n">01</span><svg class="ic"><use href="#i-user"/></svg><b>وصول العميل</b></div>
+        <div class="js-step"><span class="n">02</span><svg class="ic"><use href="#i-inbox"/></svg><b>الاستقبال</b></div>
+        <div class="js-step e3"><span class="n">03</span><svg class="ic"><use href="#i-search"/></svg><b>البحث عن العميل / السيارة</b></div>
+        <div class="js-step dec"><span class="n">04</span><svg class="ic"><use href="#i-route"/></svg><b>عميل موجود أو جديد؟</b><small>فتح الملف أو إنشاؤه</small></div>
+        <div class="js-step"><span class="n">05</span><svg class="ic"><use href="#i-file"/></svg><b>تسجيل الزيارة</b></div>
+        <div class="js-step key eor e3"><span class="n">06</span><svg class="ic"><use href="#i-clip"/></svg><b>إنشاء <span class="en">Work Order</span></b></div>
+        <div class="js-step"><span class="n">07</span><svg class="ic"><use href="#i-user"/></svg><b>إسناد الفني</b></div>
+        <div class="js-step"><span class="n">08</span><svg class="ic"><use href="#i-phone"/></svg><b>ظهور السيارة في صفحة الفني</b></div>
+        <div class="js-step e3"><span class="n">09</span><svg class="ic"><use href="#i-scan"/></svg><b>الفحص والتشخيص</b></div>
+        <div class="js-step"><span class="n">10</span><svg class="ic"><use href="#i-clock"/></svg><b>تحديث مراحل العمل</b></div>
+        <div class="js-step key"><span class="n">11</span><svg class="ic"><use href="#i-wrench"/></svg><b>بدء العمل</b></div>
+        <div class="js-step eor e3"><span class="n">12</span><svg class="ic"><use href="#i-check"/></svg><b>اكتمال الإصلاح</b></div>
+        <div class="js-step"><span class="n">13</span><svg class="ic"><use href="#i-shield"/></svg><b>الفحص النهائي</b></div>
+        <div class="js-step"><span class="n">14</span><svg class="ic"><use href="#i-flag"/></svg><b>جاهزة للتسليم</b></div>
+        <div class="js-step end e3"><span class="n">15</span><svg class="ic"><use href="#i-truck"/></svg><b>التسليم</b></div>
+        <div class="js-step"><span class="n">16</span><svg class="ic"><use href="#i-lock"/></svg><b>إغلاق <span class="en">Work Order</span></b></div>
+        <div class="js-step end last"><span class="n">17</span><svg class="ic"><use href="#i-archive"/></svg><b>حفظ الزيارة داخل <span class="en">Vehicle History</span></b></div>
+      </div>
+      <div class="zones">
+        <div class="zone" style="--c:var(--yellow)"><b>الاستقبال</b>الخطوات 01 إلى 06</div>
+        <div class="zone" style="--c:var(--orange)"><b>الفني</b>الخطوات 07 إلى 12</div>
+        <div class="zone" style="--c:var(--info)"><b>الجودة والتسليم</b>الخطوات 13 إلى 15</div>
+        <div class="zone" style="--c:var(--ok)"><b>الأرشفة</b>الخطوات 16 و 17</div>
+      </div>
+    </div>
+  </div>
+</section>
+<!-- ===================== PAGE 10 OWNER DASHBOARD ===================== -->
+<section class="pg dash" id="p10" data-n="10" data-t="لوحة المالك" data-e="Owner Dashboard" data-c="#06B6D4" style="--stage:#06B6D4">
+  <div class="wrap">
+    <div class="head rv"><span class="pn">PAGE 10</span><div><div class="kicker">OWNER DASHBOARD</div><h2>لوحة المالك</h2><p>صورة حية لكل ما يحدث في الورشة والفروع: كم سيارة دخلت، أين هي الآن، من يعمل عليها، وأين يحدث التأخير.</p></div></div>
+    <div class="win rv">
+      <div class="win-bar"><div class="lights"><i></i><i></i><i></i></div><div class="url"><svg class="ic"><use href="#i-lock"/></svg>app.titanium.sa/owner</div><span class="sample">Sample Data — بيانات نموذجية</span></div>
+      <div class="app">
+        <aside class="side">
+          <div class="me"><div class="av">م</div><div><b>مالك الورشة</b><small>Owner</small></div></div>
+          <a class="on" href="#p10"><svg class="ic sm"><use href="#i-grid"/></svg>نظرة عامة</a>
+          <a href="#p05"><svg class="ic sm"><use href="#i-car"/></svg>السيارات</a>
+          <a href="#p07"><svg class="ic sm"><use href="#i-users"/></svg>الفنيون</a>
+          <a href="#p13"><svg class="ic sm"><use href="#i-layers"/></svg>الأقسام</a>
+          <a href="#p10"><svg class="ic sm"><use href="#i-branch"/></svg>الفروع</a>
+          <a href="#p10"><svg class="ic sm"><use href="#i-file"/></svg>التقارير</a>
+          <a href="#p18"><svg class="ic sm"><use href="#i-logs"/></svg><span class="en">Audit</span></a>
+        </aside>
+        <div class="main">
+          <div class="dtop"><div><h4>نظرة عامة — اليوم <span class="livepill"><i class="livedot"></i>مباشر · LIVE</span></h4><p>الجمعة 18 سبتمبر 2026 · آخر تحديث <span id="lastSync">الآن</span></p></div>
+            <div class="r"><span class="sel"><svg class="ic"><use href="#i-branch"/></svg>الفرع: <b>جميع الفروع</b></span><span class="sel"><svg class="ic"><use href="#i-cal"/></svg><b>اليوم</b></span></div></div>
+          <div class="live-toast" id="dashToast"></div>
+          <div class="kpis">
+            <div class="kpi"><label><svg class="ic sm"><use href="#i-car"/></svg>سيارات اليوم</label><b data-count="27" id="kpiToday">27</b><small>+3 عن أمس</small>
+              <svg class="spark" viewBox="0 0 56 22"><polyline points="0,16 9,12 18,18 27,8 36,4 45,11 56,7" fill="none" stroke="#F5D7DB" stroke-width="1.6"/></svg></div>
+            <div class="kpi yl"><label><svg class="ic sm"><use href="#i-home"/></svg>داخل الورشة</label><b data-count="18" id="kpiInside">18</b><small>من <span id="kpiInsideOf">27</span></small></div>
+            <div class="kpi"><label><svg class="ic sm"><use href="#i-scan"/></svg>بانتظار الفحص</label><b data-count="4" id="kpiWaiting">4</b><small>متوسط انتظار 22m</small></div>
+            <div class="kpi o"><label><svg class="ic sm"><use href="#i-wrench"/></svg>جاري العمل</label><b data-count="9" id="kpiWorking">9</b><small>على 5 فنيين</small></div>
+            <div class="kpi g"><label><svg class="ic sm"><use href="#i-flag"/></svg>جاهزة للتسليم</label><b data-count="5" id="kpiReady">5</b><small>تم إشعار العملاء</small></div>
+            <div class="kpi r"><label><svg class="ic sm"><use href="#i-alert"/></svg>متأخرة</label><b data-count="2" id="kpiLate">2</b><small>تتجاوز الوقت المتوقع</small></div>
+          </div>
+          <div class="live-row">
+            <div class="panel-c live-chan"><h6>قنوات الطلبات اليوم <span>مباشر من الموقع وواتساب</span></h6>
+              <div class="chan" data-ch="web"><div class="chan-ic w"><svg class="ic sm"><use href="#i-globe"/></svg></div><div class="chan-b"><div class="chan-top"><span>الموقع الإلكتروني<i class="en"> Website</i></span><b id="chWebN">13</b></div><div class="chan-bar"><i id="chWebBar" style="width:48%"></i></div></div></div>
+              <div class="chan" data-ch="wa"><div class="chan-ic a"><svg class="ic sm"><use href="#i-msg"/></svg></div><div class="chan-b"><div class="chan-top"><span><span class="en">WhatsApp</span> Business</span><b id="chWaN">9</b></div><div class="chan-bar"><i id="chWaBar" style="width:33%;background:var(--ok)"></i></div></div></div>
+              <div class="chan" data-ch="walk"><div class="chan-ic k"><svg class="ic sm"><use href="#i-pin"/></svg></div><div class="chan-b"><div class="chan-top"><span>زيارة مباشرة</span><b id="chWalkN">5</b></div><div class="chan-bar"><i id="chWalkBar" style="width:19%;background:var(--info)"></i></div></div></div>
+              <p class="chan-note"><svg class="ic sm"><use href="#i-bolt"/></svg>كل طلب من الموقع أو واتساب يفتح استقبالًا رقميًا تلقائيًا بدون تدخل يدوي.</p>
+            </div>
+            <div class="panel-c live-mon"><h6>الطلبات الواردة <span><i class="livedot sm"></i>مباشر الآن</span></h6>
+              <svg id="liveSpark" viewBox="0 0 300 70" style="width:100%;height:auto" role="img" aria-label="معدل الطلبات الواردة">
+                <defs><linearGradient id="glm" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#06B6D4" stop-opacity=".4"/><stop offset="1" stop-color="#06B6D4" stop-opacity="0"/></linearGradient></defs>
+                <path id="liveSparkFill" d="M0,50 L300,50 L300,70 L0,70Z" fill="url(#glm)"/>
+                <polyline id="liveSparkLine" points="0,50 300,50" fill="none" stroke="#06B6D4" stroke-width="2"/>
+                <circle id="liveSparkDot" cx="300" cy="50" r="4" fill="#06B6D4"/>
+              </svg>
+              <div class="live-last" id="liveLast"><svg class="ic sm"><use href="#i-inbox"/></svg><span>بانتظار أول طلب مباشر…</span></div>
+            </div>
+          </div>
+          <div class="drow">
+            <div class="panel-c chart"><h6>السيارات المستلمة آخر 7 أيام <span>عدد السيارات يوميًا</span></h6>
+              <svg viewBox="0 0 420 180" role="img" aria-label="رسم بياني لعدد السيارات اليومي">
+                <defs><linearGradient id="gb" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F5D7DB" stop-opacity=".9"/><stop offset="1" stop-color="#F5D7DB" stop-opacity=".15"/></linearGradient>
+                <linearGradient id="go" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F1916D"/><stop offset="1" stop-color="#F1916D" stop-opacity=".25"/></linearGradient></defs>
+                <g stroke="rgba(255,255,255,.07)"><line x1="10" y1="150" x2="415" y2="150"/><line x1="10" y1="110" x2="415" y2="110"/><line x1="10" y1="70" x2="415" y2="70"/><line x1="10" y1="30" x2="415" y2="30"/></g>
+                <g fill="url(#gb)">
+                  <rect x="376" y="62" width="30" height="88" rx="7"/><rect x="318" y="50" width="30" height="100" rx="7"/><rect x="260" y="74" width="30" height="76" rx="7"/>
+                  <rect x="202" y="38" width="30" height="112" rx="7"/><rect x="144" y="26" width="30" height="124" rx="7"/><rect x="86" y="54" width="30" height="96" rx="7"/>
+                </g>
+                <rect x="28" y="42" width="30" height="108" rx="7" fill="url(#go)"/>
+                <g font-size="11" fill="rgba(236,243,238,.75)" text-anchor="middle" font-family="Readex Pro, sans-serif">
+                  <text x="391" y="56">22</text><text x="333" y="44">25</text><text x="275" y="68">19</text><text x="217" y="32">28</text><text x="159" y="20">31</text><text x="101" y="48">24</text><text x="43" y="36" fill="#F1916D" font-weight="600">27</text>
+                </g>
+                <g font-size="10.5" fill="rgba(236,243,238,.45)" text-anchor="middle" font-family="Readex Pro, sans-serif">
+                  <text x="391" y="170">السبت</text><text x="333" y="170">الأحد</text><text x="275" y="170">الاثنين</text><text x="217" y="170">الثلاثاء</text><text x="159" y="170">الأربعاء</text><text x="101" y="170">الخميس</text><text x="43" y="170" fill="#F1916D">اليوم</text>
+                </g>
+              </svg>
+            </div>
+            <div class="panel-c"><h6>السيارات حسب القسم <span id="deptTotalLbl">39 عملًا نشطًا</span></h6>
+              <div class="donut-wrap">
+                <svg viewBox="0 0 42 42" width="150" height="150" role="img" aria-label="توزيع السيارات حسب القسم">
+                  <circle cx="21" cy="21" r="15.915" fill="none" stroke="rgba(255,255,255,.06)" stroke-width="5"/>
+                  <circle id="segBody" cx="21" cy="21" r="15.915" fill="none" stroke="#F1916D" stroke-width="5" stroke-dasharray="34.9 65.1" stroke-dashoffset="25" style="transition:stroke-dasharray .6s,stroke-dashoffset .6s"/>
+                  <circle id="segMech" cx="21" cy="21" r="15.915" fill="none" stroke="#F5D7DB" stroke-width="5" stroke-dasharray="27.2 72.8" stroke-dashoffset="-10.9" style="transition:stroke-dasharray .6s,stroke-dashoffset .6s"/>
+                  <circle id="segElec" cx="21" cy="21" r="15.915" fill="none" stroke="#62E3AE" stroke-width="5" stroke-dasharray="19.5 80.5" stroke-dashoffset="-39.1" style="transition:stroke-dasharray .6s,stroke-dashoffset .6s"/>
+                  <circle id="segInsp" cx="21" cy="21" r="15.915" fill="none" stroke="#8CCBFF" stroke-width="5" stroke-dasharray="14.4 85.6" stroke-dashoffset="-59.6" style="transition:stroke-dasharray .6s,stroke-dashoffset .6s"/>
+                  <text id="donutTotal" x="21" y="21" text-anchor="middle" font-size="7" font-weight="600" fill="#ECF3EE" font-family="Readex Pro, sans-serif">39</text>
+                  <text x="21" y="26.5" text-anchor="middle" font-size="2.8" fill="rgba(236,243,238,.5)" font-family="Readex Pro, sans-serif">عمل نشط</text>
+                </svg>
+                <div class="legend">
+                  <div><i style="background:#F1916D"></i>السمكرة<b id="legBody">14 سيارة</b></div>
+                  <div><i style="background:#F5D7DB"></i>الميكانيكا<b id="legMech">11 سيارة</b></div>
+                  <div><i style="background:#62E3AE"></i>الكهرباء<b id="legElec">8 سيارات</b></div>
+                  <div><i style="background:#8CCBFF"></i>الفحص<b id="legInsp">6 سيارات</b></div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="drow3">
+            <div class="panel-c"><h6><span class="en" style="font-size:13.5px;color:var(--text);font-weight:500">Technicians Performance</span><span>اليوم</span></h6>
+              <div class="tperf">
+                <div class="tp"><div class="av">أ</div><div><div class="nm"><span>أحمد</span><small>Assigned 8 · Completed 6 · In Progress 2</small></div><div class="stack"><i style="width:75%;background:var(--ok)"></i><i style="width:25%;background:var(--orange)"></i></div></div></div>
+                <div class="tp"><div class="av">م</div><div><div class="nm"><span>محمد</span><small>Assigned 7 · Completed 4 · In Progress 3</small></div><div class="stack"><i style="width:50%;background:var(--ok)"></i><i style="width:37.5%;background:var(--orange)"></i></div></div></div>
+                <div class="tp"><div class="av">س</div><div><div class="nm"><span>سعد</span><small>Assigned 6 · Completed 5 · In Progress 1</small></div><div class="stack"><i style="width:62.5%;background:var(--ok)"></i><i style="width:12.5%;background:var(--orange)"></i></div></div></div>
+                <div class="tp"><div class="av">ف</div><div><div class="nm"><span>فهد</span><small>Assigned 5 · Completed 3 · In Progress 2</small></div><div class="stack"><i style="width:37.5%;background:var(--ok)"></i><i style="width:25%;background:var(--orange)"></i></div></div></div>
+              </div>
+              <div class="legend2" style="margin-top:16px"><span style="display:inline-flex;gap:6px;align-items:center"><i style="width:10px;height:10px;border-radius:3px;background:var(--ok);display:inline-block"></i>منجزة</span><span style="display:inline-flex;gap:6px;align-items:center"><i style="width:10px;height:10px;border-radius:3px;background:var(--orange);display:inline-block"></i>قيد العمل</span></div>
+            </div>
+            <div class="panel-c"><h6>مؤشرات الوقت <span>مقارنة بالأسبوع الماضي</span></h6>
+              <svg viewBox="0 0 300 70" style="width:100%;height:auto;margin-bottom:10px" role="img" aria-label="اتجاه متوسط مدة السيارة داخل الورشة">
+                <defs><linearGradient id="ga" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F1916D" stop-opacity=".35"/><stop offset="1" stop-color="#F1916D" stop-opacity="0"/></linearGradient></defs>
+                <path d="M0,18 L43,24 L86,20 L129,32 L172,30 L215,42 L258,40 L300,48 L300,70 L0,70Z" fill="url(#ga)"/>
+                <polyline points="0,18 43,24 86,20 129,32 172,30 215,42 258,40 300,48" fill="none" stroke="#F1916D" stroke-width="2"/>
+                <circle cx="300" cy="48" r="3.5" fill="#F1916D"/>
+              </svg>
+              <div class="avgs">
+                <div class="avg"><span>متوسط وقت الفحص</span><span><b>1h 12m</b><em class="up">−8%</em></span></div>
+                <div class="avg"><span>متوسط مدة العمل</span><span><b>3h 40m</b><em class="up">−5%</em></span></div>
+                <div class="avg"><span>متوسط مدة السيارة داخل الورشة</span><span><b>6h 05m</b><em class="up">−11%</em></span></div>
+                <div class="avg"><span>إنتاجية الفني</span><span><b>4.5</b> <small class="faint">سيارة / يوم</small></span></div>
+              </div>
+            </div>
+            <div class="panel-c"><h6>السيارات المتأخرة <span class="st bad" style="font-size:11px">2</span></h6>
+              <div class="late">
+                <div class="lt"><span><span class="code">WO-2026-00109</span><br><span class="en">GMC Yukon</span> · ميكانيكا</span><span class="st bad">+3h</span></div>
+                <div class="lt"><span><span class="code">WO-2026-00117</span><br><span class="en">Hyundai Sonata</span> · دهان</span><span class="st bad">+1h 40m</span></div>
+              </div>
+              <h6 style="margin-top:18px">آخر النشاطات <span><i class="livedot sm"></i>Activity Feed</span></h6>
+              <div class="feed" id="liveFeed">
+                <div class="fi"><i style="background:var(--orange)"></i><span>أحمد رفع 3 صور على <span class="code">WO-00125</span></span><small>14:35</small></div>
+                <div class="fi"><i style="background:var(--yellow)"></i><span>خالد استلم <span class="en">Lexus ES</span></span><small>14:20</small></div>
+                <div class="fi"><i style="background:var(--info)"></i><span>سعد أرسل <span class="code">WO-00138</span> للفحص النهائي</span><small>14:02</small></div>
+                <div class="fi"><i style="background:var(--ok)"></i><span>تم تسليم <span class="en">Hyundai Elantra</span></span><small>13:30</small></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== PAGE 12 CUSTOMER TRACKING ===================== -->
+<section class="pg" id="p12" data-n="11" data-t="متابعة العميل" data-e="Customer Tracking" data-c="#F472B6" style="--stage:#F472B6">
+  <div class="wrap">
+    <div class="head rv"><span class="pn">PAGE 11</span><div><div class="kicker">CUSTOMER TRACKING</div><h2>متابعة العميل</h2><p>العميل لا يدخل إلى النظام الداخلي. يصله رابط محدود وآمن يعرض حالة سيارته فقط، ويتحدث تلقائيًا مع كل تحديث من الفني.</p></div></div>
+    <div class="trk">
+      <div class="phone rv"><div class="scr"><div class="notch"></div>
+        <div class="sbar"><span>2:36</span><span>5G ▮▮▮</span></div>
+        <div class="tk">
+          <div style="font-family:var(--mono);font-size:10.5px;color:var(--faint);text-align:center;direction:ltr;margin:-26px 0 16px">🔒 track.titanium.sa/X7K29</div>
+          <div class="logo"><div class="mark"><span>Ti</span></div>Titanium — الفرع الرئيسي</div>
+          <div class="carc"><span class="code">WO-2026-00125</span><h5>Toyota Camry 2023</h5>
+            <div class="now2"><span style="font-size:12px;color:var(--muted)">Current Status</span><span class="st work">جاري العمل</span></div></div>
+          <div class="tsteps"><h6>مراحل العمل</h6>
+            <div class="ts d"><span class="c"><svg class="ic sm"><use href="#i-check"/></svg></span>تم الاستلام</div>
+            <div class="ts d"><span class="c"><svg class="ic sm"><use href="#i-check"/></svg></span>تم الفحص</div>
+            <div class="ts d"><span class="c"><svg class="ic sm"><use href="#i-check"/></svg></span>تم اعتماد العمل</div>
+            <div class="ts a"><span class="c"></span>جاري العمل</div>
+            <div class="ts p"><span class="c"></span>الفحص النهائي</div>
+            <div class="ts p"><span class="c"></span>جاهزة للتسليم</div>
+          </div>
+          <div class="meta"><span>آخر تحديث: <span class="en">02:35 PM</span></span><span>الفرع الرئيسي</span></div>
+          <div class="help"><span class="w">تواصل عبر <span class="en">WhatsApp</span></span><span>موقع الفرع</span></div>
+        </div>
+      </div></div>
+      <div class="rv">
+        <h3 style="font-size:20px;font-weight:500;margin-bottom:6px">ما يراه العميل</h3>
+        <div class="shows"><span class="st ok">حالة سيارته فقط</span><span class="st ok">مراحل العمل الخاصة بها</span><span class="st ok">آخر تحديث</span><span class="st ok">الفرع</span></div>
+        <h3 style="font-size:20px;font-weight:500;margin-bottom:14px">ما لا يستطيع رؤيته</h3>
+        <div class="hidden-list">
+          <div class="hl"><svg class="ic"><use href="#i-lock"/></svg>بيانات العملاء الآخرين</div>
+          <div class="hl"><svg class="ic"><use href="#i-lock"/></svg>بيانات الإدارة</div>
+          <div class="hl"><svg class="ic"><use href="#i-lock"/></svg>التقارير</div>
+          <div class="hl"><svg class="ic"><use href="#i-lock"/></svg>معلومات داخلية حساسة</div>
+          <div class="hl"><svg class="ic"><use href="#i-lock"/></svg><span><span class="en">Work Orders</span> أخرى</span></div>
+          <div class="hl"><svg class="ic"><use href="#i-lock"/></svg>صلاحيات الموظفين</div>
+        </div>
+        <div class="tokcmp">
+          <div class="tokc bad"><b style="font-weight:500">رقم تسلسلي</b><div class="u">track.titanium.sa/125</div><p>يسهل تخمينه: تغيير الرقم إلى 126 قد يكشف سيارة عميل آخر.</p></div>
+          <div class="tokc good"><b style="font-weight:500"><span class="en">Token</span> غير قابل للتخمين</b><div class="u">track.titanium.sa/X7K29</div><p>رمز عشوائي مرتبط بأمر عمل واحد، ويمكن إيقافه بعد التسليم.</p></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== PAGE 13 DEPARTMENTS ===================== -->
+<section class="pg" id="p13" data-n="12" data-t="أقسام الورشة" data-e="Workshop Departments" data-c="#C2703D" style="--stage:#C2703D">
+  <div class="wrap">
+    <div class="head rv"><span class="pn">PAGE 12</span><div><div class="kicker">WORKSHOP DEPARTMENTS</div><h2>أقسام الورشة</h2><p>كل قسم يرى السيارات الموجودة لديه الآن، وأمر العمل نفسه ينتقل بين الأقسام حسب طبيعة العمل دون فتح أمر جديد.</p></div></div>
+    <div class="depts rv">
+      <div class="glass dp" style="--dc:#C2703D"><div class="b"><svg class="ic lg"><use href="#i-hammer"/></svg></div><h4>السمكرة</h4><div class="en2">Body Repair</div><div class="cnt"><b>14</b>سيارة</div></div>
+      <div class="glass dp" style="--dc:#E85B9E"><div class="b"><svg class="ic lg"><use href="#i-paint"/></svg></div><h4>الدهان</h4><div class="en2">Paint</div><div class="cnt"><b>5</b>سيارات</div></div>
+      <div class="glass dp" style="--dc:#3E9EE8"><div class="b"><svg class="ic lg"><use href="#i-gear"/></svg></div><h4>الميكانيكا</h4><div class="en2">Mechanical</div><div class="cnt"><b>11</b>سيارة</div></div>
+      <div class="glass dp" style="--dc:#FBBF24"><div class="b"><svg class="ic lg"><use href="#i-bolt"/></svg></div><h4>الكهرباء</h4><div class="en2">Electrical</div><div class="cnt"><b>8</b>سيارات</div></div>
+      <div class="glass dp" style="--dc:#2DD4BF"><div class="b"><svg class="ic lg"><use href="#i-scan"/></svg></div><h4>الفحص</h4><div class="en2">Inspection</div><div class="cnt"><b>6</b>سيارات</div></div>
+      <div class="glass dp" style="--dc:#34D399"><div class="b"><svg class="ic lg"><use href="#i-badge"/></svg></div><h4>الجودة</h4><div class="en2">Quality Control</div><div class="cnt"><b>3</b>سيارات</div></div>
+      <div class="glass dp" style="--dc:#F1916D"><div class="b"><svg class="ic lg"><use href="#i-truck"/></svg></div><h4>التسليم</h4><div class="en2">Delivery</div><div class="cnt"><b>5</b>سيارات</div></div>
+    </div>
+    <div class="glass route rv">
+      <h5>مثال: مسار سيارة تحتاج سمكرة ودهان</h5>
+      <p>نفس <span class="en">Work Order</span> ينتقل من قسم إلى آخر، ويُسجل كل انتقال في مراحل العمل.</p>
+      <div class="scroll-x"><div class="rt" style="min-width:680px">
+        <div class="st2"><i></i><span>Reception</span><small>الاستقبال</small></div><div class="ln"></div>
+        <div class="st2"><i></i><span>Inspection</span><small>الفحص</small></div><div class="ln"></div>
+        <div class="st2 on"><i></i><span>Body Repair</span><small>السمكرة</small></div><div class="ln"></div>
+        <div class="st2"><i></i><span>Paint</span><small>الدهان</small></div><div class="ln"></div>
+        <div class="st2"><i></i><span>Quality Control</span><small>الجودة</small></div><div class="ln"></div>
+        <div class="st2"><i></i><span>Ready</span><small>جاهزة</small></div><div class="ln"></div>
+        <div class="st2 end"><i></i><span>Delivery</span><small>التسليم</small></div>
+      </div></div>
+    </div>
+  </div>
+</section>
+
+
+
+<!-- ===================== PAGE 17 SERVER ===================== -->
+
+<section class="pg" id="p17" data-n="13" data-t="البنية التقنية للخادم" data-e="Server Architecture" data-c="#8FA3B8" style="--stage:#8FA3B8">
+  <div class="wrap">
+    <div class="head rv"><span class="pn">PAGE 13</span><div><div class="kicker">SERVER ARCHITECTURE</div><h2>كيف تعمل المنظومة تقنيًا على الخادم؟</h2><p><b style="font-weight:500;color:var(--text)">TITANIUM CENTRAL SERVER — الخادم المركزي للمنظومة.</b> يستضيف أنظمة الورشة وقاعدة البيانات والخدمات الرقمية ضمن بيئة مركزية آمنة.</p></div></div>
+    <div class="srv">
+      <div class="rack rv">
+        <div class="rack-h"><div class="b"><svg class="ic lg"><use href="#i-server"/></svg></div><div><b>TITANIUM CENTRAL SERVER</b><span>الخادم المركزي للمنظومة</span></div><div class="leds"><i></i><i></i><i></i></div></div>
+        <div class="os">
+          <div class="os-h"><svg class="ic"><use href="#i-terminal"/></svg><b style="font-weight:500">Ubuntu 24.04 LTS</b><span class="faint" style="font-size:12px">Operating System</span></div>
+          <div class="dock">
+            <div class="dock-h"><svg class="ic"><use href="#i-box"/></svg><b style="font-weight:500">Docker</b><span class="faint" style="font-size:12px">Isolated Containers</span></div>
+            <div class="ctrs">
+              <div class="ctr px"><svg class="ic lg"><use href="#i-lock"/></svg><b>Reverse Proxy</b><small>HTTPS / SSL</small></div>
+              <div class="ctr"><svg class="ic lg"><use href="#i-globe"/></svg><b>Titanium Web</b><small>Interfaces</small></div>
+              <div class="ctr api"><svg class="ic lg"><use href="#i-server"/></svg><b>Titanium Backend API</b><small>Business Logic</small></div>
+              <div class="ctr pg"><svg class="ic lg"><use href="#i-db"/></svg><b>PostgreSQL</b><small>Private Network</small></div>
+              <div class="ctr"><svg class="ic lg"><use href="#i-archive"/></svg><b>Backup Service</b><small>Scheduled</small></div>
+            </div>
+          </div>
+        </div>
+        <div class="mon"><svg class="wave" viewBox="0 0 120 24"><polyline points="0,14 12,14 18,6 24,20 30,10 40,14 60,14 66,4 72,20 78,12 90,14 120,14" fill="none" stroke="#8CCBFF" stroke-width="1.5"/></svg><b style="font-weight:500">Monitoring / Logs</b><svg class="ic"><use href="#i-activity"/></svg></div>
+      </div>
+      <div class="domains rv">
+        <h3 style="font-size:16px;font-weight:500;margin-bottom:4px">واجهات النظام</h3>
+        <div class="dmn"><div class="b"><svg class="ic"><use href="#i-inbox"/></svg></div><div><span class="code">app.titanium.sa/reception</span><span>الاستقبال</span></div></div>
+        <div class="dmn"><div class="b"><svg class="ic"><use href="#i-wrench"/></svg></div><div><span class="code">app.titanium.sa/technician</span><span>الفنيون</span></div></div>
+        <div class="dmn"><div class="b"><svg class="ic"><use href="#i-chart"/></svg></div><div><span class="code">app.titanium.sa/owner</span><span>المالك والإدارة</span></div></div>
+        <div class="dmn pub"><div class="b"><svg class="ic"><use href="#i-phone"/></svg></div><div><span class="code">track.titanium.sa</span><span>متابعة العملاء — رابط عام محدود</span></div></div>
+        <p class="faint" style="font-size:12.5px;margin-top:6px">كل الواجهات تُخدم من الخادم نفسه وتمر عبر <span class="en">Reverse Proxy</span> واحد بشهادة <span class="en">SSL</span>.</p>
+      </div>
+    </div>
+  </div>
+</section>
+<!-- ===================== PAGE 18 SECURITY ===================== -->
+<section class="pg" id="p18" data-n="14" data-t="الأمان والحماية" data-e="Security" data-c="#DC2626" style="--stage:#DC2626">
+  <div class="wrap">
+    <div class="head rv"><span class="pn">PAGE 14</span><div><div class="kicker">SECURITY</div><h2>الأمان والحماية</h2><p>الحماية ليست طبقة واحدة، بل سلسلة ضمانات تبدأ من الاتصال وتنتهي بسجل لكل إجراء.</p></div></div>
+    <div class="glass sec-strip rv">
+      <span class="node"><svg class="ic"><use href="#i-phone"/></svg>Device</span>
+      <div class="lock"><svg class="ic sm"><use href="#i-lock"/></svg><span class="en">HTTPS</span></div>
+      <span class="node core"><svg class="ic"><use href="#i-server"/></svg>Backend API</span>
+      <div class="lock"><svg class="ic sm"><use href="#i-shield"/></svg><span class="en">RBAC</span></div>
+      <span class="node db"><svg class="ic"><use href="#i-db"/></svg>PostgreSQL</span>
+      <div class="x"><svg class="ic sm"><use href="#i-x"/></svg>الجوال أو <span class="en">iPad</span> أو الكمبيوتر لا يتصل مباشرة بـ<span class="en">PostgreSQL</span></div>
+    </div>
+    <div class="secg rv">
+      <div class="glass sc"><svg class="ic lg"><use href="#i-lock"/></svg><b>HTTPS</b><p>كل البيانات بين الجهاز والخادم مشفرة.</p></div>
+      <div class="glass sc"><svg class="ic lg"><use href="#i-key"/></svg><b>Secure Authentication</b><p>حساب شخصي لكل موظف، لا حسابات مشتركة.</p></div>
+      <div class="glass sc"><svg class="ic lg"><use href="#i-hash"/></svg><b>Password Hashing</b><p>كلمات المرور لا تُحفظ كنص؛ حتى الإدارة لا تستطيع قراءتها.</p></div>
+      <div class="glass sc"><svg class="ic lg"><use href="#i-users"/></svg><b>Role-Based Access Control</b><p>الصلاحيات مرتبطة بالدور لا بالشخص.</p></div>
+      <div class="glass sc"><svg class="ic lg"><use href="#i-shield"/></svg><b>Server-Side Authorization</b><p>كل طلب يُفحص في الخادم قبل تنفيذه.</p></div>
+      <div class="glass sc"><svg class="ic lg"><use href="#i-db"/></svg><b>Database Isolation</b><p>قاعدة البيانات داخل شبكة خاصة غير مكشوفة.</p></div>
+      <div class="glass sc"><svg class="ic lg"><use href="#i-logs"/></svg><b>Audit Logs</b><p>من فعل ماذا ومتى، لكل إجراء حساس.</p></div>
+      <div class="glass sc"><svg class="ic lg"><use href="#i-archive"/></svg><b>Backup</b><p>نسخ احتياطي مجدول مع إمكانية الاستعادة.</p></div>
+      <div class="glass sc"><svg class="ic lg"><use href="#i-timer"/></svg><b>Session Management</b><p>انتهاء الجلسات تلقائيًا وإمكانية إنهائها عن بعد.</p></div>
+      <div class="glass sc"><svg class="ic lg"><use href="#i-link"/></svg><b>Secure Customer Tracking Tokens</b><p>روابط عشوائية لا يمكن تخمينها.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== PAGE 19 LIVE FLOW ===================== -->
+<section class="pg" id="p19" data-n="15" data-t="كيف تتحدث لوحة المالك؟" data-e="Live Operational Flow" data-c="#FB923C" style="--stage:#FB923C">
+  <div class="wrap">
+    <div class="head rv"><span class="pn">PAGE 15</span><div><div class="kicker">LIVE OPERATIONAL FLOW</div><h2>كيف تتحدث لوحة المالك؟</h2><p>اضغط "تشغيل المحاكاة" لترى كيف ينتقل حدث واحد من الورشة إلى كل الواجهات.</p></div></div>
+    <div class="live">
+      <div class="lanes rv">
+        <div class="lane" data-lane="0"><h5><i>01</i>موظف الاستقبال يسجل سيارة</h5>
+          <div class="steps"><span>الاستقبال يسجل سيارة</span><em class="ar">←</em><span><span class="en">Backend</span> يحفظ <span class="en">Work Order</span></span><em class="ar">←</em><span class="en">PostgreSQL</span><em class="ar">←</em><span><span class="en">Dashboard</span>: سيارة جديدة</span></div></div>
+        <div class="lane" data-lane="1"><h5><i>02</i>الفني يبدأ العمل</h5>
+          <div class="steps"><span>الفني يبدأ العمل</span><em class="ar">←</em><span><span class="en">Backend</span> يسجل <span class="en">Status Event</span></span><em class="ar">←</em><span class="en">PostgreSQL</span><em class="ar">←</em><span><span class="en">Dashboard</span>: تتغير الحالة</span></div></div>
+        <div class="lane" data-lane="2"><h5><i>03</i>الفني ينهي العمل</h5>
+          <div class="steps"><span class="en">Status = Ready</span><em class="ar">←</em><span class="en">Dashboard</span><em class="ar">←</em><span class="en">Supervisor</span><em class="ar">←</em><span class="en">Customer Tracking</span></div></div>
+        <div class="sim"><button class="btn pri" id="simBtn"><svg class="ic sm"><use href="#i-play"/></svg>تشغيل المحاكاة</button><button class="btn" id="simReset"><svg class="ic sm"><use href="#i-refresh"/></svg>إعادة</button></div>
+        <div class="nomanual"><b>لا يوجد موظف يدخل أرقام الـ<span class="en">Dashboard</span> يدويًا.</b> اللوحة هي قراءة وتحليل لنفس بيانات التشغيل التي يدخلها الاستقبال والفنيون أثناء عملهم.</div>
+      </div>
+      <div class="glass mini-dash rv">
+        <h5><span class="en">Owner Dashboard</span><span class="sample">LIVE · Sample</span></h5>
+        <div class="mk"><div id="mkIn"><b>18</b><span>داخل الورشة</span></div><div id="mkWork"><b>9</b><span>جاري العمل</span></div><div id="mkReady"><b>5</b><span>جاهزة</span></div></div>
+        <div class="mrow"><span><span class="code">WO-2026-00146</span> · <span class="en">Toyota Hilux</span></span><span class="st idle" id="mStatus">—</span></div>
+        <div class="mrow"><span>متابعة العميل</span><span class="faint" id="mTrack" style="font-size:12px">لم يُرسل رابط بعد</span></div>
+        <div class="mrow"><span>واجهة المشرف</span><span class="faint" id="mSup" style="font-size:12px">—</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== PAGE 20 FINAL ===================== -->
+<section class="pg" id="p20" data-n="16" data-t="الصورة النهائية للمنظومة" data-e="Final Ecosystem" data-c="#FACC15" style="--stage:#FACC15">
+  <div class="wrap">
+    <div class="head rv"><span class="pn">PAGE 16</span><div><div class="kicker">FINAL ECOSYSTEM</div><h2>الصورة النهائية للمنظومة</h2><p>من أول رسالة يرسلها العميل حتى تسليم سيارته، كل شيء يمر عبر نواة واحدة.</p></div></div>
+    <div class="glass eco rv">
+      <span class="node"><svg class="ic"><use href="#i-user"/></svg>CUSTOMER</span>
+      <div class="vline flow"></div>
+      <span class="node"><svg class="ic"><use href="#i-msg"/></svg>Website / WhatsApp</span>
+      <div class="vline flow"></div>
+      <span class="node"><svg class="ic"><use href="#i-inbox"/></svg>RECEPTION</span>
+      <div class="vline flow"></div>
+      <span class="node"><svg class="ic"><use href="#i-clip"/></svg>WORK ORDER</span>
+      <div class="vline flow"></div>
+      <span class="node core big"><svg class="ic lg"><use href="#i-server"/></svg>TITANIUM BACKEND</span>
+      <div class="vline flow"></div>
+      <span class="node db big"><svg class="ic lg"><use href="#i-db"/></svg>POSTGRESQL</span>
+      <div class="top0"></div>
+      <div class="row3">
+        <span class="node"><svg class="ic"><use href="#i-wrench"/></svg><span>TECHNICIAN<span class="tl2">PAGE</span></span></span>
+        <span class="node"><svg class="ic"><use href="#i-eye"/></svg><span>SUPERVISOR<span class="tl2">VIEW</span></span></span>
+        <span class="node"><svg class="ic"><use href="#i-chart"/></svg><span>OWNER<span class="tl2">DASHBOARD</span></span></span>
+      </div>
+      <div class="mid"></div>
+      <span class="node" style="direction:rtl"><svg class="ic"><use href="#i-clock"/></svg><span>مراحل العمل<span class="tl2 en">TIMELINE</span></span></span>
+      <div class="vline flow"></div>
+      <span class="node"><svg class="ic"><use href="#i-phone"/></svg>CUSTOMER TRACKING</span>
+      <div class="vline flow"></div>
+      <span class="node del big"><svg class="ic lg"><use href="#i-truck"/></svg>DELIVERY</span>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== CLOSING ===================== -->
+<section class="pg closing" id="p21" data-n="17" data-t="الرسالة الأساسية" data-e="Key Message" data-c="#F1916D" style="--stage:#F1916D">
+  <div class="wrap rv">
+    <blockquote>لا يوجد إدخال مكرر للبيانات؛ المعلومة تدخل مرة واحدة، ثم تظهر تلقائيًا لكل مستخدم حسب صلاحياته.</blockquote>
+    <p class="summary"><span class="en">Titanium Digital Workshop</span> يحول دورة العمل داخل الورشة إلى مسار رقمي واحد. يبدأ من استقبال العميل والسيارة وإنشاء أمر العمل، ثم ينتقل إلى الفني ومراحل التنفيذ والفحص النهائي والتسليم. جميع البيانات تحفظ في قاعدة مركزية واحدة، ومنها تتحدث لوحة المالك والمشرف ومتابعة العميل تلقائيًا.</p>
+    <div class="wordmark">Titanium<span>DIGITAL WORKSHOP</span></div>
+  </div>
+</section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="cred"><b>تم الإنشاء والتنفيذ والفكرة من قبل يزيد حامد</b><span>Concept, Design &amp; Implementation by Yazeed Hamed</span></div>
+    <div class="keys">التنقل بين الأقسام: <kbd>PgUp</kbd><kbd>PgDn</kbd> · القائمة <kbd>M</kbd></div>
+  </div>
+</footer>
+<div class="toast" id="toast" role="status"><svg class="ic sm"><use href="#i-check"/></svg><span></span></div>
+
+<script>
+(function(){
+  document.documentElement.classList.add('js');
+  const secs=[...document.querySelectorAll('section.pg')];
+  const toc=document.getElementById('toc'), dots=document.getElementById('dots');
+  secs.forEach(s=>{
+    const c=s.dataset.c||'#F1916D';
+    const a=document.createElement('a');a.href='#'+s.id;
+    a.style.setProperty('--sc',c);
+    a.innerHTML='<span class="n" style="color:'+c+'">'+s.dataset.n+'</span><span>'+s.dataset.t+'<small>'+s.dataset.e+'</small></span>';
+    toc.appendChild(a);
+    const d=document.createElement('a');d.href='#'+s.id;d.dataset.t=s.dataset.t;d.style.setProperty('--sc',c);d.setAttribute('aria-label',s.dataset.t);dots.appendChild(d);
+  });
+  const drawer=document.getElementById('drawer'),menuBtn=document.getElementById('menuBtn');
+  const setDrawer=o=>{drawer.classList.toggle('open',o);drawer.setAttribute('aria-hidden',!o);menuBtn.setAttribute('aria-expanded',o)};
+  menuBtn.onclick=()=>setDrawer(true);
+  drawer.querySelectorAll('[data-close]').forEach(e=>e.onclick=()=>setDrawer(false));
+  toc.addEventListener('click',e=>{if(e.target.closest('a'))setDrawer(false)});
+
+  let cur=0;
+  const nowNum=document.getElementById('nowNum'),nowTtl=document.getElementById('nowTtl');
+  const setActive=i=>{cur=i;const c=secs[i].dataset.c||'#F1916D';
+    nowNum.textContent=secs[i].dataset.n;nowNum.style.color=c;nowTtl.textContent=secs[i].dataset.t;
+    [...toc.children].forEach((a,j)=>a.classList.toggle('on',j===i));[...dots.children].forEach((a,j)=>a.classList.toggle('on',j===i));};
+  const io=new IntersectionObserver(es=>{es.forEach(e=>{if(e.isIntersecting)setActive(secs.indexOf(e.target))})},{rootMargin:'-45% 0px -50% 0px'});
+  secs.forEach(s=>io.observe(s));
+  const go=d=>{const i=Math.max(0,Math.min(secs.length-1,cur+d));secs[i].scrollIntoView({behavior:'smooth'})};
+  document.getElementById('prevBtn').onclick=()=>go(-1);
+  document.getElementById('nextBtn').onclick=()=>go(1);
+  document.addEventListener('keydown',e=>{
+    if(e.target.closest('input,textarea'))return;
+    if(e.key==='Escape')setDrawer(false);
+    if(e.key==='m'||e.key==='M')setDrawer(!drawer.classList.contains('open'));
+    if(e.key==='PageDown'||(e.key==='ArrowDown'&&e.altKey)){e.preventDefault();go(1)}
+    if(e.key==='PageUp'||(e.key==='ArrowUp'&&e.altKey)){e.preventDefault();go(-1)}
+  });
+  const prog=document.getElementById('progress');
+  addEventListener('scroll',()=>{const h=document.documentElement;prog.style.width=(h.scrollTop/(h.scrollHeight-h.clientHeight)*100)+'%'},{passive:true});
+
+  // reveal
+  const rio=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');rio.unobserve(e.target)}}),{threshold:.08});
+  document.querySelectorAll('.rv').forEach(el=>rio.observe(el));
+
+  // toasts
+  const toast=document.getElementById('toast');let tt;
+  document.addEventListener('click',e=>{const b=e.target.closest('[data-toast]');if(!b)return;
+    toast.querySelector('span').textContent=b.dataset.toast+' — (عرض توضيحي)';toast.classList.add('show');clearTimeout(tt);tt=setTimeout(()=>toast.classList.remove('show'),2200)});
+
+  // supervisor department filter
+  const fb=document.querySelectorAll('[data-dep]');
+  fb.forEach(b=>{if(b.tagName!=='BUTTON')return;b.onclick=()=>{
+    fb.forEach(x=>x.tagName==='BUTTON'&&x.classList.toggle('on',x===b));
+    document.querySelectorAll('#supTable tbody tr').forEach(r=>{r.style.display=(b.dataset.dep==='all'||r.dataset.dep===b.dataset.dep)?'':'none'})}});
+  // supervisor live timers
+  const fmt=m=>Math.floor(m/60)+'h '+String(m%60).padStart(2,'0')+'m';
+  setInterval(()=>document.querySelectorAll('.tick').forEach(t=>{t.dataset.m=+t.dataset.m+1;t.textContent=fmt(+t.dataset.m)}),60000);
+
+  // KPI count-up (once)
+  const kio=new IntersectionObserver(es=>es.forEach(e=>{if(!e.isIntersecting)return;kio.unobserve(e.target);
+    const el=e.target,to=+el.dataset.count;let n=0;const st=performance.now();
+    const f=t=>{const p=Math.min(1,(t-st)/900);el.textContent=Math.round(to*(1-Math.pow(1-p,3)));if(p<1)requestAnimationFrame(f)};
+    if(matchMedia('(prefers-reduced-motion: reduce)').matches)return;requestAnimationFrame(f)}),{threshold:.6});
+  document.querySelectorAll('[data-count]').forEach(el=>kio.observe(el));
+
+  // live simulation
+  const lanes=[...document.querySelectorAll('.lane')];
+  const mk={in:document.querySelector('#mkIn b'),work:document.querySelector('#mkWork b'),ready:document.querySelector('#mkReady b')};
+  const mS=document.getElementById('mStatus'),mT=document.getElementById('mTrack'),mSup=document.getElementById('mSup');
+  let timers=[];
+  const bump=id=>{const el=document.getElementById(id);el.classList.add('bump');setTimeout(()=>el.classList.remove('bump'),900)};
+  const reset=()=>{timers.forEach(clearTimeout);timers=[];lanes.forEach(l=>{l.classList.remove('on');l.querySelectorAll('.steps span').forEach(s=>s.classList.remove('lit'))});
+    mk.in.textContent=18;mk.work.textContent=9;mk.ready.textContent=5;mS.className='st idle';mS.textContent='—';mT.textContent='لم يُرسل رابط بعد';mSup.textContent='—'};
+  const at=(ms,fn)=>timers.push(setTimeout(fn,ms));
+  document.getElementById('simReset').onclick=reset;
+  document.getElementById('simBtn').onclick=()=>{reset();let t=0;
+    lanes.forEach((l,li)=>{const steps=[...l.querySelectorAll('.steps > span')];
+      at(t,()=>{lanes.forEach(x=>x.classList.toggle('on',x===l))});
+      steps.forEach((s,si)=>{at(t+si*650,()=>{steps.forEach(x=>x.classList.remove('lit'));s.classList.add('lit')})});
+      t+=steps.length*650;
+      at(t-150,()=>{
+        if(li===0){mk.in.textContent=19;bump('mkIn');mS.className='st wait';mS.textContent='تم الاستلام';mT.textContent='track.titanium.sa/Q4M8T';mSup.textContent='سيارة جديدة غير مسندة'}
+        if(li===1){mk.work.textContent=10;bump('mkWork');mS.className='st work';mS.textContent='جاري العمل';mT.textContent='جاري العمل';mSup.textContent='الفني: تركي'}
+        if(li===2){mk.work.textContent=9;mk.ready.textContent=6;bump('mkReady');bump('mkWork');mS.className='st ok';mS.textContent='جاهزة للتسليم';mT.textContent='جاهزة للتسليم ✓';mSup.textContent='جاهزة — بانتظار التسليم'}
+      });
+      t+=500;});
+    at(t,()=>lanes.forEach(x=>x.classList.remove('on')));
+  };
+})();
+</script>
+<script>
+(function(){
+  const dash = document.getElementById('p10');
+  if(!dash) return;
+
+  const $ = id => document.getElementById(id);
+  const kpiToday=$('kpiToday'), kpiInside=$('kpiInside'), kpiWaiting=$('kpiWaiting'),
+        kpiWorking=$('kpiWorking'), kpiReady=$('kpiReady'), kpiLate=$('kpiLate'),
+        kpiInsideOf=$('kpiInsideOf');
+  const chWebN=$('chWebN'), chWaN=$('chWaN'), chWalkN=$('chWalkN'),
+        chWebBar=$('chWebBar'), chWaBar=$('chWaBar'), chWalkBar=$('chWalkBar');
+  const legBody=$('legBody'), legMech=$('legMech'), legElec=$('legElec'), legInsp=$('legInsp');
+  const segBody=$('segBody'), segMech=$('segMech'), segElec=$('segElec'), segInsp=$('segInsp');
+  const donutTotal=$('donutTotal'), deptTotalLbl=$('deptTotalLbl');
+  const liveFeed=$('liveFeed'), liveLast=$('liveLast'), dashToast=$('dashToast'), lastSync=$('lastSync');
+  const sparkLine=$('liveSparkLine'), sparkFill=$('liveSparkFill'), sparkDot=$('liveSparkDot');
+
+  if(!kpiToday||!liveFeed) return;
+
+  const state = {
+    today:27, inside:18, waiting:4, working:9, ready:5, late:2,
+    dept:{body:14, mech:11, elec:8, insp:6},
+    ch:{web:13, wa:9, walk:5}
+  };
+  const cars = ['Hyundai Tucson','Kia Sportage','Toyota Yaris','Nissan Altima','Ford Explorer','Chevrolet Tahoe','Mazda 6','GMC Acadia','Honda Accord','Lexus RX','Toyota Fortuner','Hyundai Elantra'];
+  const depts = [['body','السمكرة'],['mech','الميكانيكا'],['elec','الكهرباء'],['insp','الفحص']];
+  const channelInfo = {
+    web:{label:'الموقع الإلكتروني', en:'Website', cls:'src-web', icon:'i-globe'},
+    wa:{label:'واتساب', en:'WhatsApp Business', cls:'src-wa', icon:'i-msg'},
+    walk:{label:'زيارة مباشرة', en:'Walk-in', cls:'src-walk', icon:'i-pin'}
+  };
+
+  const pick = arr => arr[Math.floor(Math.random()*arr.length)];
+  const weightedChannel = () => { const r=Math.random(); return r<0.5?'web':(r<0.82?'wa':'walk'); };
+
+  function bump(el){ if(!el) return; el.classList.remove('bump'); void el.offsetWidth; el.classList.add('bump'); }
+
+  function setText(el, val){ if(el) el.textContent = val; }
+
+  function renderChannels(){
+    const total = state.ch.web + state.ch.wa + state.ch.walk || 1;
+    setText(chWebN, state.ch.web); setText(chWaN, state.ch.wa); setText(chWalkN, state.ch.walk);
+    if(chWebBar) chWebBar.style.width = Math.round(state.ch.web/total*100)+'%';
+    if(chWaBar) chWaBar.style.width = Math.round(state.ch.wa/total*100)+'%';
+    if(chWalkBar) chWalkBar.style.width = Math.round(state.ch.walk/total*100)+'%';
+  }
+
+  function renderDonut(){
+    const d = state.dept;
+    const total = d.body + d.mech + d.elec + d.insp || 1;
+    const pct = { body: d.body/total*100, mech: d.mech/total*100, elec: d.elec/total*100, insp: d.insp/total*100 };
+    let cum = 0;
+    const segs = [['body',segBody],['mech',segMech],['elec',segElec],['insp',segInsp]];
+    segs.forEach(([key,el])=>{
+      if(!el) return;
+      const p = pct[key];
+      const offset = 25 - cum;
+      el.setAttribute('stroke-dasharray', p.toFixed(1)+' '+(100-p).toFixed(1));
+      el.setAttribute('stroke-dashoffset', offset.toFixed(1));
+      cum += p;
+    });
+    setText(donutTotal, total);
+    setText(deptTotalLbl, total+' عملًا نشطًا');
+    setText(legBody, d.body+' سيارة'); setText(legMech, d.mech+' سيارة'); setText(legElec, d.elec+' سيارات'); setText(legInsp, d.insp+' سيارات');
+  }
+
+  function renderKpis(){
+    setText(kpiToday, state.today);
+    setText(kpiInside, state.inside);
+    setText(kpiInsideOf, state.today);
+    setText(kpiWaiting, state.waiting);
+    setText(kpiWorking, state.working);
+    setText(kpiReady, state.ready);
+    setText(kpiLate, state.late);
+  }
+  renderChannels(); renderDonut(); renderKpis();
+
+  const sparkVals = [4,5,3,6,5,4,7,5,6,4,5,6];
+  function redrawSpark(){
+    const w=300, h=70, max=10, n=sparkVals.length;
+    const step = w/(n-1);
+    const pts = sparkVals.map((v,i)=>{
+      const x = (i*step).toFixed(1);
+      const y = (h - (v/max)*(h-14) - 6).toFixed(1);
+      return x+','+y;
+    });
+    if(sparkLine) sparkLine.setAttribute('points', pts.join(' '));
+    if(sparkFill) sparkFill.setAttribute('d', 'M'+pts.join(' L')+` L${w},${h} L0,${h}Z`);
+    const last = pts[pts.length-1].split(',');
+    if(sparkDot){ sparkDot.setAttribute('cx', last[0]); sparkDot.setAttribute('cy', last[1]); }
+  }
+  redrawSpark();
+
+  function pushFeed(html, colorVar){
+    if(!liveFeed) return;
+    const div = document.createElement('div');
+    div.className = 'fi';
+    div.innerHTML = '<i style="background:'+colorVar+'"></i><span>'+html+'</span><small>الآن</small>';
+    liveFeed.insertBefore(div, liveFeed.firstChild);
+    while(liveFeed.children.length > 6){ liveFeed.removeChild(liveFeed.lastChild); }
+  }
+
+  function showToast(html){
+    if(!dashToast) return;
+    const div = document.createElement('div');
+    div.className = 'lt-item';
+    div.innerHTML = '<svg class="ic sm"><use href="#i-bell"/></svg><span>'+html+'</span>';
+    dashToast.appendChild(div);
+    requestAnimationFrame(()=>requestAnimationFrame(()=>div.classList.add('show')));
+    setTimeout(()=>{ div.classList.remove('show'); setTimeout(()=>div.remove(), 450); }, 4200);
+  }
+
+  let secsSince = 0;
+  setInterval(()=>{
+    secsSince++;
+    if(lastSync) lastSync.textContent = secsSince < 2 ? 'الآن' : ('قبل '+secsSince+' ثانية');
+  }, 1000);
+
+  function tick(){
+    const r = Math.random();
+    if(r < 0.68){
+      // new incoming request
+      const car = pick(cars);
+      const ch = weightedChannel();
+      const [dkey, dlabel] = pick(depts);
+      state.today++; state.inside++; state.waiting++;
+      state.ch[ch]++; state.dept[dkey]++;
+      renderKpis(); renderChannels(); renderDonut();
+      bump(kpiToday); bump(kpiInside); bump(kpiWaiting);
+      bump(ch==='web'?chWebN:ch==='wa'?chWaN:chWalkN);
+      const info = channelInfo[ch];
+      pushFeed('طلب جديد عبر <b>'+info.label+'</b> — <span class="en">'+car+'</span> · '+dlabel, ch==='web'?'#38BDF8':ch==='wa'?'var(--ok)':'var(--info)');
+      if(liveLast) liveLast.innerHTML = '<svg class="ic sm"><use href="#'+info.icon+'"/></svg><span class="'+info.cls+'">'+info.label+'</span> · <span class="en">'+car+'</span> — <b>الآن</b>';
+      if(ch==='web'){ showToast('طلب جديد من <b>الموقع الإلكتروني</b> — <span class="en">'+car+'</span>'); }
+      sparkVals.shift(); sparkVals.push(4+Math.round(Math.random()*5));
+      redrawSpark();
+    } else if(r < 0.85 && state.waiting>0 && state.working<20){
+      state.waiting--; state.working++;
+      renderKpis(); bump(kpiWaiting); bump(kpiWorking);
+      pushFeed('الفني بدأ العمل على سيارة <span class="en">'+pick(cars)+'</span>', 'var(--orange)');
+    } else if(state.working>0 && state.ready<12){
+      state.working--; state.ready++;
+      renderKpis(); bump(kpiWorking); bump(kpiReady);
+      pushFeed('سيارة <span class="en">'+pick(cars)+'</span> أصبحت جاهزة للتسليم', 'var(--ok)');
+    } else if(state.ready>0 && state.inside>0){
+      state.ready--; state.inside--;
+      renderKpis(); bump(kpiReady); bump(kpiInside);
+      pushFeed('تم تسليم سيارة <span class="en">'+pick(cars)+'</span> للعميل', 'var(--yellow)');
+    }
+    secsSince = 0;
+    if(lastSync) lastSync.textContent = 'الآن';
+    schedule();
+  }
+  function schedule(){ setTimeout(tick, 5000 + Math.random()*4000); }
+
+  const dio = new IntersectionObserver(es=>{
+    es.forEach(e=>{ if(e.isIntersecting){ schedule(); dio.disconnect(); } });
+  }, {threshold:.2});
+  dio.observe(dash);
+})();
+</script>
+
+<!-- ===== Giga9 — أداة قلم الشرح وإدارة الملاحظات (مضافة تلقائيًا) ===== -->
+<canvas id="gnxCanvas" class="gnx-canvas"></canvas>
+
+<div id="gnxFab" class="gnx-fab" title="أدوات العرض">
+  <svg class="gnx-ic gnx-ic-tools" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19l7-7 3 3-7 7-3-3z"/><path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"/><path d="M2 2l7.586 7.586"/><circle cx="11" cy="11" r="2"/></svg>
+  <svg class="gnx-ic gnx-ic-x" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
+  <span id="gnxFabDot" class="gnx-fab-dot"></span>
+</div>
+
+<div id="gnxPanel" class="gnx-panel">
+  <div class="gnx-tabs">
+    <button class="gnx-tab gnx-on" data-gtab="pen">
+      <svg class="gnx-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19l7-7 3 3-7 7-3-3z"/><path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"/></svg>
+      قلم الشرح
+    </button>
+    <button class="gnx-tab" data-gtab="notes">
+      <svg class="gnx-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 3h9a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V9z"/><path d="M9 3v6H3"/><path d="M8 13h8M8 17h5"/></svg>
+      الملاحظات <span id="gnxNotesCount" class="gnx-count">0</span>
+    </button>
+  </div>
+
+  <div class="gnx-body" data-gbody="pen">
+    <div class="gnx-row gnx-between">
+      <span class="gnx-lbl">تفعيل الرسم على الشاشة</span>
+      <label class="gnx-switch"><input type="checkbox" id="gnxDrawToggle"><span class="gnx-slider"></span></label>
+    </div>
+
+    <div class="gnx-row">
+      <span class="gnx-lbl">اللون</span>
+      <div class="gnx-swatches" id="gnxColors">
+        <button class="gnx-sw gnx-on" data-color="#F1916D" style="background:#F1916D"></button>
+        <button class="gnx-sw" data-color="#F5D7DB" style="background:#F5D7DB"></button>
+        <button class="gnx-sw" data-color="#62E3AE" style="background:#62E3AE"></button>
+        <button class="gnx-sw" data-color="#8CCBFF" style="background:#8CCBFF"></button>
+        <button class="gnx-sw" data-color="#FFFFFF" style="background:#FFFFFF"></button>
+        <button class="gnx-sw" data-color="#FF6F5E" style="background:#FF6F5E"></button>
+      </div>
+    </div>
+
+    <div class="gnx-row">
+      <span class="gnx-lbl">سُمك الخط</span>
+      <div class="gnx-sizes" id="gnxSizes">
+        <button class="gnx-sz" data-size="3"><i style="width:5px;height:5px"></i></button>
+        <button class="gnx-sz gnx-on" data-size="5"><i style="width:8px;height:8px"></i></button>
+        <button class="gnx-sz" data-size="9"><i style="width:12px;height:12px"></i></button>
+      </div>
+      <button id="gnxEraser" class="gnx-chip" data-tip="ممحاة">
+        <svg class="gnx-ic sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 20H7l-5-5a2 2 0 0 1 0-2.8l9.5-9.5a2 2 0 0 1 2.8 0l5.7 5.7a2 2 0 0 1 0 2.8L13 18"/></svg>
+      </button>
+    </div>
+
+    <div class="gnx-row gnx-actions">
+      <button id="gnxUndo" class="gnx-btn2"><svg class="gnx-ic sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10h10a5 5 0 0 1 5 5v1M3 10l5-5M3 10l5 5"/></svg> تراجع</button>
+      <button id="gnxClearDraw" class="gnx-btn2 gnx-danger"><svg class="gnx-ic sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M8 6V4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2m2 0-1 14a1 1 0 0 1-1 1H8a1 1 0 0 1-1-1L6 6"/></svg> مسح الكل</button>
+    </div>
+    <p class="gnx-hint">الرسم مؤقت لهذه الجلسة فقط — يختفي عند تحديث الصفحة.</p>
+  </div>
+
+  <div class="gnx-body" data-gbody="notes" style="display:none">
+    <div class="gnx-row">
+      <textarea id="gnxNoteInput" class="gnx-textarea" rows="2" placeholder="اكتب ملاحظة سريعة… (Enter للإضافة)"></textarea>
+    </div>
+    <div class="gnx-row gnx-actions">
+      <button id="gnxAddNote" class="gnx-btn2 gnx-primary">+ إضافة ملاحظة</button>
+      <button id="gnxClearNotes" class="gnx-btn2 gnx-danger">مسح الكل</button>
+    </div>
+    <div id="gnxNotesList" class="gnx-notes-list">
+      <div class="gnx-empty">لا توجد ملاحظات بعد</div>
+    </div>
+  </div>
+</div>
+
+<style>
+.gnx-canvas{position:fixed;inset:0;width:100%;height:100%;z-index:99990;pointer-events:none;touch-action:none}
+.gnx-canvas.gnx-active{pointer-events:auto;cursor:crosshair}
+.gnx-fab{position:fixed;left:20px;bottom:20px;width:52px;height:52px;border-radius:50%;
+  background:linear-gradient(165deg,var(--peach,var(--orange,#F1916D)),var(--pink,var(--yellow,#F5D7DB)));
+  display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:99995;
+  box-shadow:0 14px 32px -10px rgba(0,0,0,.6);color:#2a1408;transition:transform .25s ease;user-select:none}
+.gnx-fab:hover{transform:scale(1.07)}
+.gnx-fab .gnx-ic{width:21px;height:21px;position:absolute;transition:opacity .2s,transform .2s}
+.gnx-fab .gnx-ic-x{opacity:0;transform:scale(.5) rotate(-45deg)}
+.gnx-fab.gnx-open .gnx-ic-tools{opacity:0;transform:scale(.5) rotate(45deg)}
+.gnx-fab.gnx-open .gnx-ic-x{opacity:1;transform:scale(1) rotate(0)}
+.gnx-fab-dot{position:absolute;top:-2px;left:-2px;width:14px;height:14px;border-radius:50%;background:#FF6F5E;
+  border:2px solid var(--deep,#0F213D);display:none;box-shadow:0 0 0 0 rgba(255,111,94,.6);animation:gnxpulse 1.6s infinite}
+.gnx-fab.gnx-drawing .gnx-fab-dot{display:block}
+@keyframes gnxpulse{0%{box-shadow:0 0 0 0 rgba(255,111,94,.55)}70%{box-shadow:0 0 0 9px rgba(255,111,94,0)}100%{box-shadow:0 0 0 0 rgba(255,111,94,0)}}
+
+.gnx-panel{position:fixed;left:20px;bottom:84px;width:258px;max-width:calc(100vw - 40px);
+  background:var(--deep,#0F213D);border:1px solid var(--line-2,rgba(255,255,255,.1));border-radius:18px;
+  padding:14px;z-index:99994;box-shadow:0 24px 60px -22px rgba(0,0,0,.65);
+  display:none;opacity:0;transform:translateY(10px);transition:opacity .2s,transform .2s;
+  font-family:var(--font,'Readex Pro',sans-serif);color:var(--text,#ECF3EE);direction:rtl}
+.gnx-panel.gnx-show{display:block}
+.gnx-panel.gnx-visible{opacity:1;transform:translateY(0)}
+.gnx-tabs{display:flex;gap:6px;margin-bottom:12px;background:rgba(255,255,255,.04);padding:4px;border-radius:12px}
+.gnx-tab{flex:1;display:flex;align-items:center;justify-content:center;gap:5px;padding:7px 6px;border-radius:9px;
+  background:transparent;color:var(--faint,rgba(236,243,238,.5));font-size:11.5px;cursor:pointer;border:none;font-family:inherit}
+.gnx-tab.gnx-on{background:rgba(255,255,255,.08);color:var(--text,#ECF3EE)}
+.gnx-tab .gnx-ic{width:14px;height:14px}
+.gnx-count{background:var(--peach,var(--orange,#F1916D));color:#2a1408;font-size:9.5px;border-radius:7px;
+  padding:0 5px;line-height:15px;min-width:15px;display:inline-block;text-align:center}
+.gnx-row{margin-bottom:11px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.gnx-row.gnx-between{justify-content:space-between}
+.gnx-lbl{font-size:12px;color:var(--muted,rgba(236,243,238,.7))}
+.gnx-switch{position:relative;width:38px;height:22px;flex:none}
+.gnx-switch input{opacity:0;width:0;height:0;position:absolute}
+.gnx-slider{position:absolute;inset:0;background:rgba(255,255,255,.14);border-radius:20px;transition:.2s;cursor:pointer}
+.gnx-slider::before{content:"";position:absolute;width:16px;height:16px;left:3px;top:3px;background:#fff;border-radius:50%;transition:.2s}
+.gnx-switch input:checked + .gnx-slider{background:var(--peach,var(--orange,#F1916D))}
+.gnx-switch input:checked + .gnx-slider::before{transform:translateX(-16px)}
+.gnx-swatches{display:flex;gap:7px}
+.gnx-sw{width:20px;height:20px;border-radius:50%;border:2px solid transparent;cursor:pointer;padding:0}
+.gnx-sw.gnx-on{border-color:var(--text,#ECF3EE);transform:scale(1.12)}
+.gnx-sizes{display:flex;gap:6px}
+.gnx-sz{width:26px;height:26px;border-radius:8px;background:rgba(255,255,255,.05);border:1px solid var(--line-2,rgba(255,255,255,.1));
+  display:flex;align-items:center;justify-content:center;cursor:pointer}
+.gnx-sz i{display:block;border-radius:50%;background:var(--text,#ECF3EE)}
+.gnx-sz.gnx-on{border-color:var(--peach,var(--orange,#F1916D));background:rgba(241,145,109,.12)}
+.gnx-chip{width:26px;height:26px;border-radius:8px;background:rgba(255,255,255,.05);border:1px solid var(--line-2,rgba(255,255,255,.1));
+  display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--text,#ECF3EE);margin-right:auto}
+.gnx-chip.gnx-on{border-color:#FF6F5E;background:rgba(255,111,94,.14);color:#FF6F5E}
+.gnx-ic.sm{width:14px;height:14px}
+.gnx-actions{gap:8px}
+.gnx-btn2{flex:1;display:flex;align-items:center;justify-content:center;gap:6px;padding:8px 10px;border-radius:10px;
+  background:rgba(255,255,255,.05);border:1px solid var(--line-2,rgba(255,255,255,.1));color:var(--text,#ECF3EE);
+  font-size:11.5px;cursor:pointer;font-family:inherit}
+.gnx-btn2.gnx-danger{color:#FF6F5E}
+.gnx-btn2.gnx-danger:hover{background:rgba(255,111,94,.1);border-color:rgba(255,111,94,.3)}
+.gnx-btn2.gnx-primary{background:var(--peach,var(--orange,#F1916D));color:#2a1408;border-color:transparent;font-weight:600}
+.gnx-hint{font-size:10.5px;color:var(--faint,rgba(236,243,238,.4));margin:2px 2px 0;line-height:1.5}
+.gnx-textarea{width:100%;resize:vertical;background:rgba(255,255,255,.05);border:1px solid var(--line-2,rgba(255,255,255,.1));
+  border-radius:10px;padding:8px 10px;color:var(--text,#ECF3EE);font-family:inherit;font-size:12.5px;min-height:46px}
+.gnx-textarea:focus{outline:none;border-color:var(--peach,var(--orange,#F1916D))}
+.gnx-notes-list{max-height:230px;overflow-y:auto;display:flex;flex-direction:column;gap:7px;scrollbar-width:thin}
+.gnx-note{background:rgba(255,255,255,.045);border:1px solid var(--line-2,rgba(255,255,255,.08));border-radius:10px;
+  padding:8px 10px;position:relative}
+.gnx-note p{font-size:12px;line-height:1.5;margin:0 18px 4px 0;white-space:pre-wrap;word-break:break-word}
+.gnx-note small{font-size:9.5px;color:var(--faint,rgba(236,243,238,.4))}
+.gnx-note-del{position:absolute;top:7px;left:8px;background:none;border:none;color:var(--faint,rgba(236,243,238,.4));
+  cursor:pointer;font-size:13px;line-height:1;padding:2px}
+.gnx-note-del:hover{color:#FF6F5E}
+.gnx-empty{font-size:11.5px;color:var(--faint,rgba(236,243,238,.4));text-align:center;padding:14px 0}
+@media (max-width:480px){
+  .gnx-fab{left:14px;bottom:14px}
+  .gnx-panel{left:14px;bottom:78px;width:calc(100vw - 28px)}
+}
+</style>
+
+<script>
+(function(){
+  try{
+    var canvas = document.getElementById('gnxCanvas');
+    var ctx = canvas.getContext('2d');
+    var fab = document.getElementById('gnxFab');
+    var panel = document.getElementById('gnxPanel');
+    var drawToggle = document.getElementById('gnxDrawToggle');
+    var colorsWrap = document.getElementById('gnxColors');
+    var sizesWrap = document.getElementById('gnxSizes');
+    var eraserBtn = document.getElementById('gnxEraser');
+    var undoBtn = document.getElementById('gnxUndo');
+    var clearDrawBtn = document.getElementById('gnxClearDraw');
+
+    var state = { color:'#F1916D', size:5, eraser:false, drawing:false, strokes:[], current:null };
+    var DPR = Math.max(1, window.devicePixelRatio || 1);
+
+    function resize(){
+      var w = window.innerWidth, h = window.innerHeight;
+      canvas.width = w * DPR; canvas.height = h * DPR;
+      canvas.style.width = w+'px'; canvas.style.height = h+'px';
+      ctx.setTransform(DPR,0,0,DPR,0,0);
+      redraw();
+    }
+    function redraw(){
+      ctx.clearRect(0,0,canvas.width,canvas.height);
+      state.strokes.forEach(function(s){
+        if(!s.points.length) return;
+        ctx.strokeStyle = s.erase ? 'rgba(0,0,0,1)' : s.color;
+        ctx.globalCompositeOperation = s.erase ? 'destination-out' : 'source-over';
+        ctx.lineWidth = s.size; ctx.lineCap='round'; ctx.lineJoin='round';
+        ctx.beginPath();
+        s.points.forEach(function(p,i){ i===0?ctx.moveTo(p[0],p[1]):ctx.lineTo(p[0],p[1]); });
+        ctx.stroke();
+      });
+      ctx.globalCompositeOperation = 'source-over';
+    }
+    window.addEventListener('resize', resize);
+    resize();
+
+    function pos(e){
+      var t = (e.touches && e.touches[0]) || e;
+      return [t.clientX, t.clientY];
+    }
+    function start(e){
+      if(!state.drawing) return;
+      e.preventDefault();
+      state.current = { color: state.color, size: state.size, erase: state.eraser, points:[pos(e)] };
+      state.strokes.push(state.current);
+    }
+    function move(e){
+      if(!state.drawing || !state.current) return;
+      e.preventDefault();
+      state.current.points.push(pos(e));
+      redraw();
+    }
+    function end(){ state.current = null; }
+
+    canvas.addEventListener('mousedown', start);
+    canvas.addEventListener('mousemove', move);
+    window.addEventListener('mouseup', end);
+    canvas.addEventListener('touchstart', start, {passive:false});
+    canvas.addEventListener('touchmove', move, {passive:false});
+    canvas.addEventListener('touchend', end);
+
+    function setDrawing(on){
+      state.drawing = on;
+      canvas.classList.toggle('gnx-active', on);
+      fab.classList.toggle('gnx-drawing', on);
+      drawToggle.checked = on;
+    }
+    drawToggle.addEventListener('change', function(){ setDrawing(this.checked); });
+
+    colorsWrap.querySelectorAll('.gnx-sw').forEach(function(btn){
+      btn.addEventListener('click', function(){
+        colorsWrap.querySelectorAll('.gnx-sw').forEach(function(b){ b.classList.remove('gnx-on'); });
+        btn.classList.add('gnx-on');
+        state.color = btn.dataset.color;
+        state.eraser = false;
+        eraserBtn.classList.remove('gnx-on');
+      });
+    });
+    sizesWrap.querySelectorAll('.gnx-sz').forEach(function(btn){
+      btn.addEventListener('click', function(){
+        sizesWrap.querySelectorAll('.gnx-sz').forEach(function(b){ b.classList.remove('gnx-on'); });
+        btn.classList.add('gnx-on');
+        state.size = parseInt(btn.dataset.size,10);
+      });
+    });
+    eraserBtn.addEventListener('click', function(){
+      state.eraser = !state.eraser;
+      eraserBtn.classList.toggle('gnx-on', state.eraser);
+      if(state.eraser) state.size = Math.max(state.size, 16);
+    });
+    undoBtn.addEventListener('click', function(){ state.strokes.pop(); redraw(); });
+    clearDrawBtn.addEventListener('click', function(){ state.strokes = []; redraw(); });
+
+    // ---------- panel open/close + tabs ----------
+    var panelOpen = false;
+    function togglePanel(force){
+      panelOpen = typeof force === 'boolean' ? force : !panelOpen;
+      fab.classList.toggle('gnx-open', panelOpen);
+      if(panelOpen){
+        panel.classList.add('gnx-show');
+        requestAnimationFrame(function(){ panel.classList.add('gnx-visible'); });
+      } else {
+        panel.classList.remove('gnx-visible');
+        setTimeout(function(){ if(!panelOpen) panel.classList.remove('gnx-show'); }, 200);
+      }
+    }
+    fab.addEventListener('click', function(){ togglePanel(); });
+    document.addEventListener('click', function(e){
+      if(panelOpen && !panel.contains(e.target) && !fab.contains(e.target) && !canvas.contains(e.target)) togglePanel(false);
+    });
+    panel.querySelectorAll('.gnx-tab').forEach(function(tab){
+      tab.addEventListener('click', function(){
+        panel.querySelectorAll('.gnx-tab').forEach(function(t){ t.classList.remove('gnx-on'); });
+        tab.classList.add('gnx-on');
+        var which = tab.dataset.gtab;
+        panel.querySelectorAll('.gnx-body').forEach(function(b){ b.style.display = (b.dataset.gbody===which?'block':'none'); });
+      });
+    });
+
+    // ---------- notes (persisted in localStorage) ----------
+    var NOTES_KEY = 'gnx_notes_' + location.pathname.split('/').pop();
+    var notesList = document.getElementById('gnxNotesList');
+    var notesCount = document.getElementById('gnxNotesCount');
+    var noteInput = document.getElementById('gnxNoteInput');
+    var addNoteBtn = document.getElementById('gnxAddNote');
+    var clearNotesBtn = document.getElementById('gnxClearNotes');
+    var notes = [];
+    try{ notes = JSON.parse(localStorage.getItem(NOTES_KEY) || '[]'); }catch(e){ notes = []; }
+
+    function saveNotes(){ try{ localStorage.setItem(NOTES_KEY, JSON.stringify(notes)); }catch(e){} }
+    function renderNotes(){
+      notesCount.textContent = notes.length;
+      if(!notes.length){ notesList.innerHTML = '<div class="gnx-empty">لا توجد ملاحظات بعد</div>'; return; }
+      notesList.innerHTML = notes.slice().reverse().map(function(n){
+        return '<div class="gnx-note" data-id="'+n.id+'"><button class="gnx-note-del">×</button>'+
+          '<p>'+n.text.replace(/</g,'&lt;')+'</p><small>'+n.time+'</small></div>';
+      }).join('');
+      notesList.querySelectorAll('.gnx-note-del').forEach(function(btn){
+        btn.addEventListener('click', function(){
+          var id = btn.closest('.gnx-note').dataset.id;
+          notes = notes.filter(function(n){ return String(n.id) !== id; });
+          saveNotes(); renderNotes();
+        });
+      });
+    }
+    function addNote(){
+      var val = noteInput.value.trim();
+      if(!val) return;
+      notes.push({ id: Date.now(), text: val, time: new Date().toLocaleString('ar-SA',{hour:'2-digit',minute:'2-digit',day:'numeric',month:'short'}) });
+      noteInput.value = '';
+      saveNotes(); renderNotes();
+    }
+    addNoteBtn.addEventListener('click', addNote);
+    noteInput.addEventListener('keydown', function(e){
+      if(e.key==='Enter' && !e.shiftKey){ e.preventDefault(); addNote(); }
+    });
+    clearNotesBtn.addEventListener('click', function(){
+      if(!notes.length) return;
+      notes = []; saveNotes(); renderNotes();
+    });
+    renderNotes();
+  }catch(err){ console.warn('gnx toolkit init failed', err); }
+})();
+</script>
+<!-- ===== نهاية أداة Giga9 ===== -->
+
+</body>
+</html>

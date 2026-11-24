@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>مراحل التنفيذ والاستثمار — Titanium Digital Workshop</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Readex+Pro:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --forest:#1B3358; --deep:#0F213D; --abyss:#06142E;
+  --pink:#F5D7DB; --peach:#F1916D;
+  --text:#ECF3EE; --muted:rgba(236,243,238,.72); --faint:rgba(236,243,238,.45);
+  --glass:rgba(255,255,255,.05); --line:rgba(245,215,219,.16); --line-2:rgba(255,255,255,.09);
+  --ok:#62E3AE;
+  --font:'Readex Pro','Segoe UI',Tahoma,sans-serif; --mono:'JetBrains Mono',ui-monospace,monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+  font-family:var(--font); color:var(--text); font-weight:300; line-height:1.7;
+  background:
+    radial-gradient(1100px 650px at 85% -10%, rgba(241,145,109,.12), transparent 60%),
+    radial-gradient(850px 550px at 5% 100%, rgba(245,215,219,.07), transparent 55%),
+    linear-gradient(180deg, var(--forest) 0%, var(--deep) 45%, var(--abyss) 100%);
+  min-height:100vh;
+}
+.wrap{max-width:1000px;margin:0 auto;padding:clamp(20px,4vw,48px)}
+.en{direction:ltr;unicode-bidi:isolate}
+
+header{display:flex;align-items:center;gap:16px;margin-bottom:6px}
+.mark{width:46px;height:46px;border-radius:13px;display:grid;place-items:center;flex:none;position:relative;overflow:hidden;
+  background:linear-gradient(145deg,#e8ecea 0%,#9aa6a1 38%,#f7f9f8 52%,#7d8984 70%,#cfd6d3 100%);box-shadow:inset 0 1px 0 #fff,0 6px 16px -6px rgba(0,0,0,.7)}
+.mark span{font-weight:700;color:var(--abyss);font-size:18px;letter-spacing:-.5px}
+.mark::after{content:"";position:absolute;inset:auto 0 0 0;height:3px;background:var(--peach)}
+header b{display:block;font-weight:600;font-size:15px}
+header small{display:block;font-size:11.5px;color:var(--faint)}
+
+h1{font-size:clamp(24px,3.6vw,34px);font-weight:600;margin:22px 0 8px;letter-spacing:-.3px}
+.sub{color:var(--muted);font-size:14.5px;max-width:70ch;margin-bottom:22px}
+.overview{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:34px}
+.ov-tag{display:flex;align-items:center;gap:8px;font-size:12.5px;color:var(--muted);padding:8px 14px;border-radius:999px;border:1px solid var(--line-2);background:var(--glass)}
+.ov-tag b{color:var(--text);font-weight:600}
+
+.timeline{position:relative;padding-inline-start:0}
+.tl-line{position:absolute;top:26px;bottom:26px;right:27px;width:2px;background:linear-gradient(180deg,var(--peach),var(--pink) 60%,transparent);opacity:.5}
+.phase{position:relative;display:grid;grid-template-columns:1fr 56px;gap:20px;margin-bottom:22px;break-inside:avoid;page-break-inside:avoid}
+.ph-badge{width:56px;height:56px;border-radius:16px;background:linear-gradient(165deg,rgba(255,255,255,.09),rgba(255,255,255,.02));
+  border:1.5px solid var(--peach);display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative;align-self:center;z-index:1}
+.ph-badge b{font-family:var(--mono);font-size:20px;font-weight:600;color:var(--peach)}
+.ph-badge span{font-size:8.5px;color:var(--faint);letter-spacing:.5px}
+.ph-card{border-radius:18px;border:1px solid var(--line-2);
+  background:linear-gradient(165deg,rgba(255,255,255,.06),rgba(255,255,255,.015));padding:20px 24px}
+.ph-top{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap;margin-bottom:12px}
+.ph-top h3{font-size:17px;font-weight:600}
+.ph-top .en-t{font-size:11.5px;color:var(--faint);margin-top:2px}
+.ph-price{text-align:left;flex:none}
+.ph-price b{display:block;font-family:var(--mono);font-size:19px;color:var(--peach);font-weight:600;direction:ltr}
+.ph-price span{font-size:10.5px;color:var(--faint)}
+.ph-price-tbd b{font-family:var(--font);direction:rtl;unicode-bidi:isolate;font-size:14.5px}
+.summary-top .total.ph-price-tbd b{font-size:22px}
+.ph-list{list-style:none;display:grid;gap:7px;margin-bottom:12px}
+.ph-list li{font-size:13px;color:var(--muted);display:flex;gap:8px;align-items:flex-start;line-height:1.6}
+.ph-list li::before{content:"";width:5px;height:5px;border-radius:50%;background:var(--peach);opacity:.7;margin-top:.6em;flex:none}
+.ph-foot{display:flex;justify-content:space-between;align-items:center;padding-top:10px;border-top:1px dashed var(--line-2);font-size:11.5px;color:var(--faint)}
+.ph-foot .dur{display:flex;align-items:center;gap:6px}
+
+.summary{margin-top:26px;padding:24px 28px;border-radius:20px;border:1px solid rgba(241,145,109,.4);
+  background:linear-gradient(135deg,rgba(241,145,109,.16),rgba(241,145,109,.03));break-inside:avoid}
+.summary-top{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:14px;margin-bottom:16px}
+.summary-top h4{font-size:15px;font-weight:500;color:var(--muted)}
+.summary-top .total{text-align:left;direction:ltr}
+.summary-top .total b{font-family:var(--mono);font-size:32px;color:var(--peach);font-weight:600}
+.summary-top .total span{display:block;font-size:11px;color:var(--faint);text-align:right;direction:rtl}
+.pay-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.pay{padding:12px 14px;border-radius:12px;background:rgba(255,255,255,.05);text-align:center}
+.pay b{display:block;font-family:var(--mono);font-size:15px;color:var(--text)}
+.pay span{font-size:10.5px;color:var(--faint);display:block;margin-top:3px;line-height:1.5}
+
+footer{margin-top:30px;padding-top:16px;border-top:1px solid var(--line-2);display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px}
+footer span{font-size:11.5px;color:var(--faint)}
+
+@media (max-width:640px){
+  .phase{grid-template-columns:1fr 44px}
+  .ph-badge{width:44px;height:44px;border-radius:12px}
+  .ph-badge b{font-size:16px}
+  .pay-grid{grid-template-columns:1fr}
+}
+
+@media print{
+  @page{size:A4;margin:14mm}
+  body{background:#fff !important;color:#111 !important}
+  header b,h1{color:var(--abyss)}
+  header small,.sub{color:#555 !important}
+  header span.en{color:#666 !important}
+  .pay b{color:#111 !important}
+  .ov-tag{border-color:#ddd;background:#fafafa;color:#444}
+  .ov-tag b{color:#111}
+  .tl-line{background:linear-gradient(180deg,#F1916D,#ddd 60%,transparent)}
+  .ph-badge{background:#fff;border-color:#F1916D}
+  .ph-card{background:#F7F6F1 !important;border:1px solid #E3E0D5}
+  .ph-top h3{color:#111}
+  .ph-top .en-t{color:#777 !important}
+  .ph-price b{color:#B5591A}
+  .ph-price span{color:#888 !important}
+  .ph-list li{color:#333}
+  .ph-foot{color:#888 !important;border-color:#ddd}
+  .summary{background:#FFF3E6 !important;border-color:#F0B27A}
+  .summary-top h4{color:#5a3418 !important}
+  .summary-top .total b{color:#B5591A}
+  .summary-top .total span{color:#888 !important}
+  .pay{background:#fff}
+  .pay span{color:#777 !important}
+  footer{border-color:#ddd}
+  footer span{color:#888 !important}
+  * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+}
+
+.found-tag{display:inline-flex;align-items:center;font-size:10px;font-weight:500;color:var(--abyss);background:var(--peach);
+  border-radius:999px;padding:3px 10px;margin-inline-start:10px;vertical-align:middle;white-space:nowrap}
+.found-note{font-size:12px;color:var(--peach);background:rgba(241,145,109,.08);border:1px dashed rgba(241,145,109,.4);
+  border-radius:10px;padding:10px 12px;margin-bottom:12px;line-height:1.7}
+.dep-tag{display:inline-flex;align-items:center;font-size:10px;font-weight:400;color:var(--faint);
+  border:1px solid var(--line-2);border-radius:999px;padding:3px 10px;margin-inline-start:10px;vertical-align:middle;white-space:nowrap}
+@media (max-width:640px){
+  .ph-top h3{display:flex;flex-direction:column;align-items:flex-start;gap:6px}
+  .found-tag,.dep-tag{margin-inline-start:0}
+}
+@media print{
+  .found-tag{background:#F1916D;color:#fff}
+  .found-note{color:#8a4a2a !important;background:#FFF3E6;border-color:#F0B27A}
+  .dep-tag{color:#888 !important;border-color:#ddd}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="mark"><span>Ti</span></div>
+    <div><b>Titanium <span class="en" style="font-weight:400;color:var(--faint)">Digital Workshop</span></b><small>خطة التنفيذ بالمراحل</small></div>
+  </header>
+
+  <h1>مراحل التنفيذ والاستثمار</h1>
+  <p class="sub">ست مراحل تسليم متتابعة، كل مرحلة تضيف طبقة تشغيلية جاهزة للاستخدام فور اكتمالها، بأسلوب التسليم المرحلي المعتمد في شركات التقنية.</p>
+
+  <div class="overview">
+    <span class="ov-tag"><b>6</b> مراحل تسليم</span>
+    <span class="ov-tag">⏱ مدة كل مرحلة حسب تفاصيلها</span>
+    <span class="ov-tag"><b>يُحدَّد لاحقًا</b></span>
+  </div>
+
+  <div class="timeline">
+    <div class="tl-line"></div>
+
+    <div class="phase">
+      <div class="ph-card">
+        <div class="ph-top"><div><h3>التأسيس والبنية التقنية <span class="found-tag">الأساس لكل المراحل القادمة</span></h3><div class="en-t">Foundation &amp; Technical Architecture</div></div>
+          <div class="ph-price ph-price-tbd"><b>يُحدَّد لاحقًا</b></div></div>
+        <ul class="ph-list">
+          <li>تحليل المتطلبات وتخطيط مراحل التنفيذ</li>
+          <li>تصميم البنية العامة وقاعدة البيانات</li>
+          <li>الموقع الإلكتروني التعريفي وربط حساب <span class="en">WhatsApp Business</span></li>
+          <li>نظام الأدوار والصلاحيات <span class="en">(RBAC)</span></li>
+        </ul>
+        <p class="found-note">هذه المرحلة هي الأساس التقني الذي تُبنى عليه بقية المراحل. يمكن تنفيذها بمفردها الآن، ثم إضافة أي مرحلة لاحقة في أي وقت دون إعادة أي عمل سابق.</p>
+        <div class="ph-foot"><span>المرحلة 1 من 6</span><span class="dur">⏱ من أسبوعين إلى 4 أسابيع تقريبًا</span></div>
+      </div>
+      <div class="ph-badge"><b>01</b><span>PHASE</span></div>
+    </div>
+
+    <div class="phase">
+      <div class="ph-card">
+        <div class="ph-top"><div><h3>تجميع وتسجيل بيانات الورشة <span class="dep-tag">🔗 مبني على المرحلة 1</span></h3><div class="en-t">Data Collection &amp; Entry</div></div>
+          <div class="ph-price ph-price-tbd"><b>يُحدَّد لاحقًا</b></div></div>
+        <ul class="ph-list">
+          <li>جمع كل الأوراق والسجلات الحالية للورشة (عملاء، سيارات، قطع غيار، أسعار، فنيين)</li>
+          <li>مراجعة وتدقيق البيانات وتنظيمها قبل إدخالها</li>
+          <li>تسجيل وإدخال البيانات كاملة داخل قاعدة بيانات النظام</li>
+          <li>أرشفة رقمية كاملة تغني الورشة عن الأوراق</li>
+        </ul>
+        <div class="ph-foot"><span>المرحلة 2 من 6</span><span class="dur">⏱ 3 أسابيع تقديريًا</span></div>
+      </div>
+      <div class="ph-badge"><b>02</b><span>PHASE</span></div>
+    </div>
+
+    <div class="phase">
+      <div class="ph-card">
+        <div class="ph-top"><div><h3>الاستقبال وتشغيل الورشة <span class="dep-tag">🔗 مبني على المرحلتين 1 و2</span></h3><div class="en-t">Reception &amp; Core Workshop Operations</div></div>
+          <div class="ph-price ph-price-tbd"><b>يُحدَّد لاحقًا</b></div></div>
+        <ul class="ph-list">
+          <li>الاستقبال الرقمي وملف العميل والسيارة</li>
+          <li>أمر العمل <span class="en">(Work Order)</span> وصفحة الفني ومراحل العمل <span class="en">TIMELINE</span></li>
+          <li>رحلة السيارة الكاملة من الاستلام حتى التسليم</li>
+          <li>تهيئة أقسام الورشة</li>
+        </ul>
+        <div class="ph-foot"><span>المرحلة 3 من 6</span><span class="dur">⏱ أسبوعان تقديريًا</span></div>
+      </div>
+      <div class="ph-badge"><b>03</b><span>PHASE</span></div>
+    </div>
+
+    <div class="phase">
+      <div class="ph-card">
+        <div class="ph-top"><div><h3>الربط التقني والبنية الخلفية <span class="dep-tag">🔗 مبني على المرحلة 1</span></h3><div class="en-t">Integration &amp; Backend Infrastructure</div></div>
+          <div class="ph-price ph-price-tbd"><b>يُحدَّد لاحقًا</b></div></div>
+        <ul class="ph-list">
+          <li>ربط البيانات بين كل الواجهات <span class="en">(API)</span></li>
+          <li>إعداد الخادم والأمان والتحديث اللحظي بين الواجهات</li>
+        </ul>
+        <div class="ph-foot"><span>المرحلة 4 من 6</span><span class="dur">⏱ أسبوع ونصف تقديريًا</span></div>
+      </div>
+      <div class="ph-badge"><b>04</b><span>PHASE</span></div>
+    </div>
+
+    <div class="phase">
+      <div class="ph-card">
+        <div class="ph-top"><div><h3>لوحة الإدارة ومتابعة العميل <span class="dep-tag">🔗 مبني على المرحلة 1</span></h3><div class="en-t">Management Dashboard &amp; Customer Tracking</div></div>
+          <div class="ph-price ph-price-tbd"><b>يُحدَّد لاحقًا</b></div></div>
+        <ul class="ph-list">
+          <li>لوحة المالك <span class="en">(Owner Dashboard)</span> وواجهة المشرف</li>
+          <li>صفحة متابعة العميل برابط آمن</li>
+        </ul>
+        <div class="ph-foot"><span>المرحلة 5 من 6</span><span class="dur">⏱ أسبوع ونصف تقديريًا</span></div>
+      </div>
+      <div class="ph-badge"><b>05</b><span>PHASE</span></div>
+    </div>
+
+    <div class="phase">
+      <div class="ph-card">
+        <div class="ph-top"><div><h3>الاختبار الشامل والإطلاق <span class="dep-tag">🔗 مبني على المرحلة 1</span></h3><div class="en-t">Integration Testing &amp; Launch</div></div>
+          <div class="ph-price ph-price-tbd"><b>يُحدَّد لاحقًا</b></div></div>
+        <ul class="ph-list">
+          <li>التكامل والاختبار الشامل لكل الوحدات</li>
+          <li>التوثيق، تدريب الفريق، والدعم الأولي بعد الإطلاق</li>
+        </ul>
+        <div class="ph-foot"><span>المرحلة 6 من 6</span><span class="dur">⏱ أسبوع تقديريًا</span></div>
+      </div>
+      <div class="ph-badge" style="border-color:var(--ok)"><b style="color:var(--ok)">06</b><span>PHASE</span></div>
+    </div>
+  </div>
+
+  <div class="summary">
+    <div class="summary-top">
+      <h4>إجمالي الاستثمار لتنفيذ المشروع كاملًا</h4>
+      <div class="total ph-price-tbd"><b>يُحدَّد لاحقًا</b><span>غير شامل ضريبة القيمة المضافة</span></div>
+    </div>
+    <div class="pay-grid">
+      <div class="pay"><b>45%</b><span>عند التوقيع</span></div>
+      <div class="pay"><b>30%</b><span>عند إنجاز المرحلتين 2 و3</span></div>
+      <div class="pay"><b>25%</b><span>عند التسليم النهائي</span></div>
+    </div>
+  </div>
+
+  <footer>
+    <span>Titanium Digital Workshop — عرض مقدّم للعميل</span>
+    <span>تم الإنشاء والتنفيذ والفكرة من قبل يزيد حامد</span>
+  </footer>
+</div>
+<!-- ===== Giga9 — أداة قلم الشرح وإدارة الملاحظات (مضافة تلقائيًا) ===== -->
+<canvas id="gnxCanvas" class="gnx-canvas"></canvas>
+
+<div id="gnxFab" class="gnx-fab" title="أدوات العرض">
+  <svg class="gnx-ic gnx-ic-tools" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19l7-7 3 3-7 7-3-3z"/><path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"/><path d="M2 2l7.586 7.586"/><circle cx="11" cy="11" r="2"/></svg>
+  <svg class="gnx-ic gnx-ic-x" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
+  <span id="gnxFabDot" class="gnx-fab-dot"></span>
+</div>
+
+<div id="gnxPanel" class="gnx-panel">
+  <div class="gnx-tabs">
+    <button class="gnx-tab gnx-on" data-gtab="pen">
+      <svg class="gnx-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19l7-7 3 3-7 7-3-3z"/><path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"/></svg>
+      قلم الشرح
+    </button>
+    <button class="gnx-tab" data-gtab="notes">
+      <svg class="gnx-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 3h9a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V9z"/><path d="M9 3v6H3"/><path d="M8 13h8M8 17h5"/></svg>
+      الملاحظات <span id="gnxNotesCount" class="gnx-count">0</span>
+    </button>
+  </div>
+
+  <div class="gnx-body" data-gbody="pen">
+    <div class="gnx-row gnx-between">
+      <span class="gnx-lbl">تفعيل الرسم على الشاشة</span>
+      <label class="gnx-switch"><input type="checkbox" id="gnxDrawToggle"><span class="gnx-slider"></span></label>
+    </div>
+
+    <div class="gnx-row">
+      <span class="gnx-lbl">اللون</span>
+      <div class="gnx-swatches" id="gnxColors">
+        <button class="gnx-sw gnx-on" data-color="#F1916D" style="background:#F1916D"></button>
+        <button class="gnx-sw" data-color="#F5D7DB" style="background:#F5D7DB"></button>
+        <button class="gnx-sw" data-color="#62E3AE" style="background:#62E3AE"></button>
+        <button class="gnx-sw" data-color="#8CCBFF" style="background:#8CCBFF"></button>
+        <button class="gnx-sw" data-color="#FFFFFF" style="background:#FFFFFF"></button>
+        <button class="gnx-sw" data-color="#FF6F5E" style="background:#FF6F5E"></button>
+      </div>
+    </div>
+
+    <div class="gnx-row">
+      <span class="gnx-lbl">سُمك الخط</span>
+      <div class="gnx-sizes" id="gnxSizes">
+        <button class="gnx-sz" data-size="3"><i style="width:5px;height:5px"></i></button>
+        <button class="gnx-sz gnx-on" data-size="5"><i style="width:8px;height:8px"></i></button>
+        <button class="gnx-sz" data-size="9"><i style="width:12px;height:12px"></i></button>
+      </div>
+      <button id="gnxEraser" class="gnx-chip" data-tip="ممحاة">
+        <svg class="gnx-ic sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 20H7l-5-5a2 2 0 0 1 0-2.8l9.5-9.5a2 2 0 0 1 2.8 0l5.7 5.7a2 2 0 0 1 0 2.8L13 18"/></svg>
+      </button>
+    </div>
+
+    <div class="gnx-row gnx-actions">
+      <button id="gnxUndo" class="gnx-btn2"><svg class="gnx-ic sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10h10a5 5 0 0 1 5 5v1M3 10l5-5M3 10l5 5"/></svg> تراجع</button>
+      <button id="gnxClearDraw" class="gnx-btn2 gnx-danger"><svg class="gnx-ic sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M8 6V4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2m2 0-1 14a1 1 0 0 1-1 1H8a1 1 0 0 1-1-1L6 6"/></svg> مسح الكل</button>
+    </div>
+    <p class="gnx-hint">الرسم مؤقت لهذه الجلسة فقط — يختفي عند تحديث الصفحة.</p>
+  </div>
+
+  <div class="gnx-body" data-gbody="notes" style="display:none">
+    <div class="gnx-row">
+      <textarea id="gnxNoteInput" class="gnx-textarea" rows="2" placeholder="اكتب ملاحظة سريعة… (Enter للإضافة)"></textarea>
+    </div>
+    <div class="gnx-row gnx-actions">
+      <button id="gnxAddNote" class="gnx-btn2 gnx-primary">+ إضافة ملاحظة</button>
+      <button id="gnxClearNotes" class="gnx-btn2 gnx-danger">مسح الكل</button>
+    </div>
+    <div id="gnxNotesList" class="gnx-notes-list">
+      <div class="gnx-empty">لا توجد ملاحظات بعد</div>
+    </div>
+  </div>
+</div>
+
+<style>
+.gnx-canvas{position:fixed;inset:0;width:100%;height:100%;z-index:99990;pointer-events:none;touch-action:none}
+.gnx-canvas.gnx-active{pointer-events:auto;cursor:crosshair}
+.gnx-fab{position:fixed;left:20px;bottom:20px;width:52px;height:52px;border-radius:50%;
+  background:linear-gradient(165deg,var(--peach,var(--orange,#F1916D)),var(--pink,var(--yellow,#F5D7DB)));
+  display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:99995;
+  box-shadow:0 14px 32px -10px rgba(0,0,0,.6);color:#2a1408;transition:transform .25s ease;user-select:none}
+.gnx-fab:hover{transform:scale(1.07)}
+.gnx-fab .gnx-ic{width:21px;height:21px;position:absolute;transition:opacity .2s,transform .2s}
+.gnx-fab .gnx-ic-x{opacity:0;transform:scale(.5) rotate(-45deg)}
+.gnx-fab.gnx-open .gnx-ic-tools{opacity:0;transform:scale(.5) rotate(45deg)}
+.gnx-fab.gnx-open .gnx-ic-x{opacity:1;transform:scale(1) rotate(0)}
+.gnx-fab-dot{position:absolute;top:-2px;left:-2px;width:14px;height:14px;border-radius:50%;background:#FF6F5E;
+  border:2px solid var(--deep,#0F213D);display:none;box-shadow:0 0 0 0 rgba(255,111,94,.6);animation:gnxpulse 1.6s infinite}
+.gnx-fab.gnx-drawing .gnx-fab-dot{display:block}
+@keyframes gnxpulse{0%{box-shadow:0 0 0 0 rgba(255,111,94,.55)}70%{box-shadow:0 0 0 9px rgba(255,111,94,0)}100%{box-shadow:0 0 0 0 rgba(255,111,94,0)}}
+
+.gnx-panel{position:fixed;left:20px;bottom:84px;width:258px;max-width:calc(100vw - 40px);
+  background:var(--deep,#0F213D);border:1px solid var(--line-2,rgba(255,255,255,.1));border-radius:18px;
+  padding:14px;z-index:99994;box-shadow:0 24px 60px -22px rgba(0,0,0,.65);
+  display:none;opacity:0;transform:translateY(10px);transition:opacity .2s,transform .2s;
+  font-family:var(--font,'Readex Pro',sans-serif);color:var(--text,#ECF3EE);direction:rtl}
+.gnx-panel.gnx-show{display:block}
+.gnx-panel.gnx-visible{opacity:1;transform:translateY(0)}
+.gnx-tabs{display:flex;gap:6px;margin-bottom:12px;background:rgba(255,255,255,.04);padding:4px;border-radius:12px}
+.gnx-tab{flex:1;display:flex;align-items:center;justify-content:center;gap:5px;padding:7px 6px;border-radius:9px;
+  background:transparent;color:var(--faint,rgba(236,243,238,.5));font-size:11.5px;cursor:pointer;border:none;font-family:inherit}
+.gnx-tab.gnx-on{background:rgba(255,255,255,.08);color:var(--text,#ECF3EE)}
+.gnx-tab .gnx-ic{width:14px;height:14px}
+.gnx-count{background:var(--peach,var(--orange,#F1916D));color:#2a1408;font-size:9.5px;border-radius:7px;
+  padding:0 5px;line-height:15px;min-width:15px;display:inline-block;text-align:center}
+.gnx-row{margin-bottom:11px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.gnx-row.gnx-between{justify-content:space-between}
+.gnx-lbl{font-size:12px;color:var(--muted,rgba(236,243,238,.7))}
+.gnx-switch{position:relative;width:38px;height:22px;flex:none}
+.gnx-switch input{opacity:0;width:0;height:0;position:absolute}
+.gnx-slider{position:absolute;inset:0;background:rgba(255,255,255,.14);border-radius:20px;transition:.2s;cursor:pointer}
+.gnx-slider::before{content:"";position:absolute;width:16px;height:16px;left:3px;top:3px;background:#fff;border-radius:50%;transition:.2s}
+.gnx-switch input:checked + .gnx-slider{background:var(--peach,var(--orange,#F1916D))}
+.gnx-switch input:checked + .gnx-slider::before{transform:translateX(-16px)}
+.gnx-swatches{display:flex;gap:7px}
+.gnx-sw{width:20px;height:20px;border-radius:50%;border:2px solid transparent;cursor:pointer;padding:0}
+.gnx-sw.gnx-on{border-color:var(--text,#ECF3EE);transform:scale(1.12)}
+.gnx-sizes{display:flex;gap:6px}
+.gnx-sz{width:26px;height:26px;border-radius:8px;background:rgba(255,255,255,.05);border:1px solid var(--line-2,rgba(255,255,255,.1));
+  display:flex;align-items:center;justify-content:center;cursor:pointer}
+.gnx-sz i{display:block;border-radius:50%;background:var(--text,#ECF3EE)}
+.gnx-sz.gnx-on{border-color:var(--peach,var(--orange,#F1916D));background:rgba(241,145,109,.12)}
+.gnx-chip{width:26px;height:26px;border-radius:8px;background:rgba(255,255,255,.05);border:1px solid var(--line-2,rgba(255,255,255,.1));
+  display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--text,#ECF3EE);margin-right:auto}
+.gnx-chip.gnx-on{border-color:#FF6F5E;background:rgba(255,111,94,.14);color:#FF6F5E}
+.gnx-ic.sm{width:14px;height:14px}
+.gnx-actions{gap:8px}
+.gnx-btn2{flex:1;display:flex;align-items:center;justify-content:center;gap:6px;padding:8px 10px;border-radius:10px;
+  background:rgba(255,255,255,.05);border:1px solid var(--line-2,rgba(255,255,255,.1));color:var(--text,#ECF3EE);
+  font-size:11.5px;cursor:pointer;font-family:inherit}
+.gnx-btn2.gnx-danger{color:#FF6F5E}
+.gnx-btn2.gnx-danger:hover{background:rgba(255,111,94,.1);border-color:rgba(255,111,94,.3)}
+.gnx-btn2.gnx-primary{background:var(--peach,var(--orange,#F1916D));color:#2a1408;border-color:transparent;font-weight:600}
+.gnx-hint{font-size:10.5px;color:var(--faint,rgba(236,243,238,.4));margin:2px 2px 0;line-height:1.5}
+.gnx-textarea{width:100%;resize:vertical;background:rgba(255,255,255,.05);border:1px solid var(--line-2,rgba(255,255,255,.1));
+  border-radius:10px;padding:8px 10px;color:var(--text,#ECF3EE);font-family:inherit;font-size:12.5px;min-height:46px}
+.gnx-textarea:focus{outline:none;border-color:var(--peach,var(--orange,#F1916D))}
+.gnx-notes-list{max-height:230px;overflow-y:auto;display:flex;flex-direction:column;gap:7px;scrollbar-width:thin}
+.gnx-note{background:rgba(255,255,255,.045);border:1px solid var(--line-2,rgba(255,255,255,.08));border-radius:10px;
+  padding:8px 10px;position:relative}
+.gnx-note p{font-size:12px;line-height:1.5;margin:0 18px 4px 0;white-space:pre-wrap;word-break:break-word}
+.gnx-note small{font-size:9.5px;color:var(--faint,rgba(236,243,238,.4))}
+.gnx-note-del{position:absolute;top:7px;left:8px;background:none;border:none;color:var(--faint,rgba(236,243,238,.4));
+  cursor:pointer;font-size:13px;line-height:1;padding:2px}
+.gnx-note-del:hover{color:#FF6F5E}
+.gnx-empty{font-size:11.5px;color:var(--faint,rgba(236,243,238,.4));text-align:center;padding:14px 0}
+@media (max-width:480px){
+  .gnx-fab{left:14px;bottom:14px}
+  .gnx-panel{left:14px;bottom:78px;width:calc(100vw - 28px)}
+}
+</style>
+
+<script>
+(function(){
+  try{
+    var canvas = document.getElementById('gnxCanvas');
+    var ctx = canvas.getContext('2d');
+    var fab = document.getElementById('gnxFab');
+    var panel = document.getElementById('gnxPanel');
+    var drawToggle = document.getElementById('gnxDrawToggle');
+    var colorsWrap = document.getElementById('gnxColors');
+    var sizesWrap = document.getElementById('gnxSizes');
+    var eraserBtn = document.getElementById('gnxEraser');
+    var undoBtn = document.getElementById('gnxUndo');
+    var clearDrawBtn = document.getElementById('gnxClearDraw');
+
+    var state = { color:'#F1916D', size:5, eraser:false, drawing:false, strokes:[], current:null };
+    var DPR = Math.max(1, window.devicePixelRatio || 1);
+
+    function resize(){
+      var w = window.innerWidth, h = window.innerHeight;
+      canvas.width = w * DPR; canvas.height = h * DPR;
+      canvas.style.width = w+'px'; canvas.style.height = h+'px';
+      ctx.setTransform(DPR,0,0,DPR,0,0);
+      redraw();
+    }
+    function redraw(){
+      ctx.clearRect(0,0,canvas.width,canvas.height);
+      state.strokes.forEach(function(s){
+        if(!s.points.length) return;
+        ctx.strokeStyle = s.erase ? 'rgba(0,0,0,1)' : s.color;
+        ctx.globalCompositeOperation = s.erase ? 'destination-out' : 'source-over';
+        ctx.lineWidth = s.size; ctx.lineCap='round'; ctx.lineJoin='round';
+        ctx.beginPath();
+        s.points.forEach(function(p,i){ i===0?ctx.moveTo(p[0],p[1]):ctx.lineTo(p[0],p[1]); });
+        ctx.stroke();
+      });
+      ctx.globalCompositeOperation = 'source-over';
+    }
+    window.addEventListener('resize', resize);
+    resize();
+
+    function pos(e){
+      var t = (e.touches && e.touches[0]) || e;
+      return [t.clientX, t.clientY];
+    }
+    function start(e){
+      if(!state.drawing) return;
+      e.preventDefault();
+      state.current = { color: state.color, size: state.size, erase: state.eraser, points:[pos(e)] };
+      state.strokes.push(state.current);
+    }
+    function move(e){
+      if(!state.drawing || !state.current) return;
+      e.preventDefault();
+      state.current.points.push(pos(e));
+      redraw();
+    }
+    function end(){ state.current = null; }
+
+    canvas.addEventListener('mousedown', start);
+    canvas.addEventListener('mousemove', move);
+    window.addEventListener('mouseup', end);
+    canvas.addEventListener('touchstart', start, {passive:false});
+    canvas.addEventListener('touchmove', move, {passive:false});
+    canvas.addEventListener('touchend', end);
+
+    function setDrawing(on){
+      state.drawing = on;
+      canvas.classList.toggle('gnx-active', on);
+      fab.classList.toggle('gnx-drawing', on);
+      drawToggle.checked = on;
+    }
+    drawToggle.addEventListener('change', function(){ setDrawing(this.checked); });
+
+    colorsWrap.querySelectorAll('.gnx-sw').forEach(function(btn){
+      btn.addEventListener('click', function(){
+        colorsWrap.querySelectorAll('.gnx-sw').forEach(function(b){ b.classList.remove('gnx-on'); });
+        btn.classList.add('gnx-on');
+        state.color = btn.dataset.color;
+        state.eraser = false;
+        eraserBtn.classList.remove('gnx-on');
+      });
+    });
+    sizesWrap.querySelectorAll('.gnx-sz').forEach(function(btn){
+      btn.addEventListener('click', function(){
+        sizesWrap.querySelectorAll('.gnx-sz').forEach(function(b){ b.classList.remove('gnx-on'); });
+        btn.classList.add('gnx-on');
+        state.size = parseInt(btn.dataset.size,10);
+      });
+    });
+    eraserBtn.addEventListener('click', function(){
+      state.eraser = !state.eraser;
+      eraserBtn.classList.toggle('gnx-on', state.eraser);
+      if(state.eraser) state.size = Math.max(state.size, 16);
+    });
+    undoBtn.addEventListener('click', function(){ state.strokes.pop(); redraw(); });
+    clearDrawBtn.addEventListener('click', function(){ state.strokes = []; redraw(); });
+
+    // ---------- panel open/close + tabs ----------
+    var panelOpen = false;
+    function togglePanel(force){
+      panelOpen = typeof force === 'boolean' ? force : !panelOpen;
+      fab.classList.toggle('gnx-open', panelOpen);
+      if(panelOpen){
+        panel.classList.add('gnx-show');
+        requestAnimationFrame(function(){ panel.classList.add('gnx-visible'); });
+      } else {
+        panel.classList.remove('gnx-visible');
+        setTimeout(function(){ if(!panelOpen) panel.classList.remove('gnx-show'); }, 200);
+      }
+    }
+    fab.addEventListener('click', function(){ togglePanel(); });
+    document.addEventListener('click', function(e){
+      if(panelOpen && !panel.contains(e.target) && !fab.contains(e.target) && !canvas.contains(e.target)) togglePanel(false);
+    });
+    panel.querySelectorAll('.gnx-tab').forEach(function(tab){
+      tab.addEventListener('click', function(){
+        panel.querySelectorAll('.gnx-tab').forEach(function(t){ t.classList.remove('gnx-on'); });
+        tab.classList.add('gnx-on');
+        var which = tab.dataset.gtab;
+        panel.querySelectorAll('.gnx-body').forEach(function(b){ b.style.display = (b.dataset.gbody===which?'block':'none'); });
+      });
+    });
+
+    // ---------- notes (persisted in localStorage) ----------
+    var NOTES_KEY = 'gnx_notes_' + location.pathname.split('/').pop();
+    var notesList = document.getElementById('gnxNotesList');
+    var notesCount = document.getElementById('gnxNotesCount');
+    var noteInput = document.getElementById('gnxNoteInput');
+    var addNoteBtn = document.getElementById('gnxAddNote');
+    var clearNotesBtn = document.getElementById('gnxClearNotes');
+    var notes = [];
+    try{ notes = JSON.parse(localStorage.getItem(NOTES_KEY) || '[]'); }catch(e){ notes = []; }
+
+    function saveNotes(){ try{ localStorage.setItem(NOTES_KEY, JSON.stringify(notes)); }catch(e){} }
+    function renderNotes(){
+      notesCount.textContent = notes.length;
+      if(!notes.length){ notesList.innerHTML = '<div class="gnx-empty">لا توجد ملاحظات بعد</div>'; return; }
+      notesList.innerHTML = notes.slice().reverse().map(function(n){
+        return '<div class="gnx-note" data-id="'+n.id+'"><button class="gnx-note-del">×</button>'+
+          '<p>'+n.text.replace(/</g,'&lt;')+'</p><small>'+n.time+'</small></div>';
+      }).join('');
+      notesList.querySelectorAll('.gnx-note-del').forEach(function(btn){
+        btn.addEventListener('click', function(){
+          var id = btn.closest('.gnx-note').dataset.id;
+          notes = notes.filter(function(n){ return String(n.id) !== id; });
+          saveNotes(); renderNotes();
+        });
+      });
+    }
+    function addNote(){
+      var val = noteInput.value.trim();
+      if(!val) return;
+      notes.push({ id: Date.now(), text: val, time: new Date().toLocaleString('ar-SA',{hour:'2-digit',minute:'2-digit',day:'numeric',month:'short'}) });
+      noteInput.value = '';
+      saveNotes(); renderNotes();
+    }
+    addNoteBtn.addEventListener('click', addNote);
+    noteInput.addEventListener('keydown', function(e){
+      if(e.key==='Enter' && !e.shiftKey){ e.preventDefault(); addNote(); }
+    });
+    clearNotesBtn.addEventListener('click', function(){
+      if(!notes.length) return;
+      notes = []; saveNotes(); renderNotes();
+    });
+    renderNotes();
+  }catch(err){ console.warn('gnx toolkit init failed', err); }
+})();
+</script>
+<!-- ===== نهاية أداة Giga9 ===== -->
+
+</body>
+</html>

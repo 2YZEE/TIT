@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>نقاط الشرح السريعة — Titanium Digital Workshop</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Readex+Pro:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --forest:#1B3358; --deep:#0F213D; --abyss:#06142E;
+  --yellow:#F5D7DB; --orange:#F1916D;
+  --text:#ECF3EE; --muted:rgba(236,243,238,.72); --faint:rgba(236,243,238,.45);
+  --glass:rgba(255,255,255,.05); --line:rgba(245,215,219,.16); --line-2:rgba(255,255,255,.09);
+  --font:'Readex Pro','Segoe UI',Tahoma,sans-serif; --mono:'JetBrains Mono',ui-monospace,monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{-webkit-text-size-adjust:100%}
+body{
+  font-family:var(--font); color:var(--text); font-weight:300; line-height:1.7;
+  background:
+    radial-gradient(1100px 650px at 85% -10%, rgba(241,145,109,.12), transparent 60%),
+    radial-gradient(850px 550px at 5% 100%, rgba(245,215,219,.07), transparent 55%),
+    linear-gradient(180deg, var(--forest) 0%, var(--deep) 45%, var(--abyss) 100%);
+  min-height:100vh;
+}
+.wrap{max-width:980px;margin:0 auto;padding:clamp(20px,4vw,48px)}
+.en{direction:ltr;unicode-bidi:isolate;font-family:var(--font)}
+
+/* header */
+header{display:flex;align-items:center;gap:16px;margin-bottom:8px}
+.mark{width:46px;height:46px;border-radius:13px;display:grid;place-items:center;flex:none;position:relative;overflow:hidden;
+  background:linear-gradient(145deg,#e8ecea 0%,#9aa6a1 38%,#f7f9f8 52%,#7d8984 70%,#cfd6d3 100%);box-shadow:inset 0 1px 0 #fff,0 6px 16px -6px rgba(0,0,0,.7)}
+.mark span{font-weight:700;color:var(--forest);font-size:18px;letter-spacing:-.5px}
+.mark::after{content:"";position:absolute;inset:auto 0 0 0;height:3px;background:var(--orange)}
+header b{display:block;font-weight:600;font-size:15px}
+header small{display:block;font-size:11.5px;color:var(--faint)}
+
+h1{font-size:clamp(24px,3.4vw,32px);font-weight:600;margin:22px 0 6px;letter-spacing:-.3px}
+.sub{color:var(--muted);font-size:14.5px;max-width:70ch;margin-bottom:8px}
+.meta{display:flex;gap:10px;flex-wrap:wrap;margin:14px 0 30px}
+.tag{font-size:11.5px;color:var(--muted);padding:5px 12px;border-radius:999px;border:1px solid var(--line-2);background:var(--glass)}
+
+/* section banner */
+.sec{display:flex;align-items:center;gap:12px;margin:30px 0 16px;padding-bottom:10px;border-bottom:2px solid var(--sc)}
+.sec .n{font-family:var(--mono);font-size:12px;color:var(--sc);border:1px solid var(--sc);border-radius:8px;padding:4px 9px}
+.sec h2{font-size:18px;font-weight:600}
+.sec span{font-size:12px;color:var(--faint);margin-inline-start:auto;direction:ltr}
+
+/* grid of points */
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.pt{border-radius:16px;border:1px solid var(--line-2);background:linear-gradient(165deg,rgba(255,255,255,.06),rgba(255,255,255,.015));
+  padding:16px 18px;border-inline-start:3px solid var(--sc);break-inside:avoid;page-break-inside:avoid}
+.pt .num{font-family:var(--mono);font-size:11px;color:var(--sc);margin-bottom:4px;display:block}
+.pt h3{font-size:14.5px;font-weight:600;margin-bottom:8px}
+.pt p{font-size:13px;color:var(--muted);line-height:1.75}
+.pt p::before{content:"\201C"}
+.pt p::after{content:"\201D"}
+
+.closing{margin-top:34px;padding:24px 26px;border-radius:18px;border:1px solid rgba(241,145,109,.35);
+  background:linear-gradient(135deg,rgba(241,145,109,.16),rgba(241,145,109,.03));break-inside:avoid}
+.closing b{display:block;font-size:13px;color:var(--orange);margin-bottom:8px;font-weight:500}
+.closing p{font-size:15.5px;font-weight:500;line-height:1.85}
+
+footer{margin-top:34px;padding-top:16px;border-top:1px solid var(--line-2);display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px}
+footer span{font-size:11.5px;color:var(--faint)}
+
+@media (max-width:640px){.grid{grid-template-columns:1fr}.sec span{display:none}}
+
+/* print */
+@media print{
+  @page{size:A4;margin:14mm}
+  body{background:#fff !important;color:#111 !important}
+  .wrap{max-width:100%;padding:0}
+  header b, h1{color:var(--forest)}
+  header small{color:#666 !important}
+  header span.en{color:#666 !important}
+  .sub, .tag{color:#444}
+  .mark{box-shadow:none}
+  .pt{background:#F7F6F1 !important;border:1px solid #E3E0D5;border-inline-start:3px solid var(--sc)}
+  .pt .num{color:#777 !important}
+  .pt h3{color:#111}
+  .pt p{color:#333}
+  .sec h2{color:#111}
+  .sec span{color:#777 !important}
+  .closing{background:#FFF3E6 !important;border-color:#F0B27A}
+  .closing p{color:#3a2100}
+  .closing b{color:#B5591A}
+  .tag{border-color:#ddd;background:#fafafa}
+  footer{border-color:#ddd}
+  footer span{color:#888 !important}
+  a{color:inherit;text-decoration:none}
+  * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="mark"><span>Ti</span></div>
+    <div><b>Titanium <span class="en" style="font-weight:400;color:var(--faint)">Digital Workshop</span></b><small>دليل الشرح السريع للعميل</small></div>
+  </header>
+
+  <h1>أهم النقاط اللي تشرحها في العرض</h1>
+  <p class="sub">ملخّص جاهز للاستخدام أثناء اجتماع العميل — جملة قصيرة توصل الفكرة لكل نقطة، بدون الدخول في تفاصيل تقنية زايدة.</p>
+  <div class="meta">
+    <span class="tag">العرض الكامل — 5 نقاط</span>
+    <span class="tag">لوحة المالك — 7 نقاط</span>
+    <span class="tag">خاتمة واحدة</span>
+  </div>
+
+  <div class="sec" style="--sc:#F1916D">
+    <span class="n">01</span><h2>لما تشرح العرض الكامل (الورشة)</h2><span class="en">Full Presentation</span>
+  </div>
+  <div class="grid">
+    <div class="pt" style="--sc:#F1916D"><span class="num">01</span><h3>الفكرة الأساسية</h3><p>هذا مو مجموعة برامج منفصلة — نظام واحد مركزي، كل قسم بالورشة (استقبال، فني، مشرف، أنت) يدخل عليه بحسابه الخاص.</p></div>
+    <div class="pt" style="--sc:#C9A227"><span class="num">02</span><h3>الرحلة الكاملة بجملة</h3><p>من لحظة ما يوصل طلب من الموقع أو واتساب، يفتح استقبال رقمي، يتحول لأمر عمل، يوصل للفني، تتحدث مراحل العمل تلقائيًا، لين التسليم ومتابعة العميل — بدون ورق وبدون تكرار إدخال.</p></div>
+    <div class="pt" style="--sc:#EF4444"><span class="num">03</span><h3>الأمان والصلاحيات</h3><p>كل مستخدم يشوف بس اللي يخصه — الفني يشوف مهامه بس، المشرف يشوف فرعه، وأنت تشوف كل شي.</p></div>
+    <div class="pt" style="--sc:#A78BFA"><span class="num">04</span><h3>قابل للتوسع</h3><p>مبني من الأول يستوعب المخزون، المدفوعات، برامج الولاء — بدون ما نعيد بناء النظام من الصفر.</p></div>
+    <div class="pt" style="--sc:#16A34A"><span class="num">05</span><h3>ربط المحاسبة</h3><p>ربطناه مع نظام الدفتر، فكل فاتورة تصدر تلقائيًا وترتبط بأمر العمل، بدون إدخال يدوي مزدوج، والالتزام الضريبي يضل بالكامل عند الدفتر.</p></div>
+  </div>
+
+  <div class="sec" style="--sc:#06B6D4">
+    <span class="n">02</span><h2>لما تشرح لوحة المالك</h2><span class="en">Live Owner Dashboard</span>
+  </div>
+  <div class="grid">
+    <div class="pt" style="--sc:#06B6D4"><span class="num">06</span><h3>الافتتاحية</h3><p>هذي نفس اللوحة اللي بتستخدمها يوميًا، وكل رقم فيها حي يتحدث لحظة بلحظة.</p></div>
+    <div class="pt" style="--sc:#38BDF8"><span class="num">07</span><h3>مصادر الطلبات</h3><p>تشوف كم طلب جاك اليوم من الموقع، من واتساب، أو زيارة مباشرة — بالثانية.</p></div>
+    <div class="pt" style="--sc:#FBBF24"><span class="num">08</span><h3>السيارات</h3><p>كل سيارة داخل الورشة الحين، وين بالظبط، مع مين، ومن أي وقت.</p></div>
+    <div class="pt" style="--sc:#34D399"><span class="num">09</span><h3>الفنيون</h3><p>تشوف كل فني، شغال على وش، وكم أنجز اليوم.</p></div>
+    <div class="pt" style="--sc:#F472B6"><span class="num">10</span><h3>الفروع</h3><p>لو عندك أكثر من فرع، تقارن بينهم بضغطة وحدة.</p></div>
+    <div class="pt" style="--sc:#A855F7"><span class="num">11</span><h3>التقارير</h3><p>تقارير أسبوعية وشهرية جاهزة تصدّرها PDF أو Excel وقت ما تحتاجها.</p></div>
+    <div class="pt" style="--sc:#DC2626"><span class="num">12</span><h3><span class="en">Audit</span> — سجل التدقيق</h3><p>كل إجراء حساس ينسجل — مين سواه ومتى، حماية لك ولفريقك.</p></div>
+  </div>
+
+  <div class="closing">
+    <b>خاتمة تقولها بالنهاية</b>
+    <p>الخلاصة: كل شي مربوط ببعض، صفر ازدواجية بإدخال البيانات، وكل قرار تسويه مبني على أرقام حية مو تقديرية.</p>
+  </div>
+
+  <footer>
+    <span>Titanium Digital Workshop — دليل شرح داخلي</span>
+    <span>تم الإنشاء والتنفيذ والفكرة من قبل يزيد حامد</span>
+  </footer>
+</div>
+</body>
+</html>
